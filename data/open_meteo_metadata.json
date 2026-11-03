@@ -1,0 +1,248 @@
+{
+  "source": "Open-Meteo Historical Weather API",
+  "api": "https://archive-api.open-meteo.com/v1/archive",
+  "start_date": "2024-10-05",
+  "end_date": "2026-10-04",
+  "timezone": "Asia/Kolkata",
+  "hourly_variables": [
+    "temperature_2m",
+    "relative_humidity_2m",
+    "dew_point_2m",
+    "precipitation",
+    "vapour_pressure_deficit",
+    "soil_moisture_0_to_7cm",
+    "wind_speed_10m"
+  ],
+  "n_locations": 10,
+  "rows": 175200,
+  "fields": [
+    "KA_BENGALURU",
+    "KA_MYSURU",
+    "KA_MANDYA",
+    "KA_TUMAKURU",
+    "KA_HASSAN",
+    "KA_SHIVAMOGGA",
+    "KA_BELAGAVI",
+    "KA_DHARWAD",
+    "KA_KALABURAGI",
+    "KA_BALLARI"
+  ],
+  "notes": [
+    "Each location is a virtual field, keyed by field_id.",
+    "Leaf wetness is not downloaded; derive a clearly-labelled proxy later.",
+    "NPK and pH are intentionally excluded from the core pipeline.",
+    "Do not inject faults/stress events until baseline EDA is complete."
+  ],
+  "locations": [
+    {
+      "field_id": "KA_BENGALURU",
+      "latitude_requested": 12.9716,
+      "longitude_requested": 77.5946,
+      "latitude_grid": 12.970123,
+      "longitude_grid": 77.56364,
+      "elevation_m": 910.0,
+      "timezone": "Asia/Kolkata",
+      "timezone_abbreviation": "GMT+5:30",
+      "utc_offset_seconds": 19800,
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "\u00b0C",
+        "relative_humidity_2m": "%",
+        "dew_point_2m": "\u00b0C",
+        "precipitation": "mm",
+        "vapour_pressure_deficit": "kPa",
+        "soil_moisture_0_to_7cm": "m\u00b3/m\u00b3",
+        "wind_speed_10m": "km/h"
+      }
+    },
+    {
+      "field_id": "KA_MYSURU",
+      "latitude_requested": 12.2958,
+      "longitude_requested": 76.6394,
+      "latitude_grid": 12.267136,
+      "longitude_grid": 76.62162,
+      "elevation_m": 748.0,
+      "timezone": "Asia/Kolkata",
+      "timezone_abbreviation": "GMT+5:30",
+      "utc_offset_seconds": 19800,
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "\u00b0C",
+        "relative_humidity_2m": "%",
+        "dew_point_2m": "\u00b0C",
+        "precipitation": "mm",
+        "vapour_pressure_deficit": "kPa",
+        "soil_moisture_0_to_7cm": "m\u00b3/m\u00b3",
+        "wind_speed_10m": "km/h"
+      }
+    },
+    {
+      "field_id": "KA_MANDYA",
+      "latitude_requested": 12.5218,
+      "longitude_requested": 76.8951,
+      "latitude_grid": 12.54833,
+      "longitude_grid": 76.898735,
+      "elevation_m": 677.0,
+      "timezone": "Asia/Kolkata",
+      "timezone_abbreviation": "GMT+5:30",
+      "utc_offset_seconds": 19800,
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "\u00b0C",
+        "relative_humidity_2m": "%",
+        "dew_point_2m": "\u00b0C",
+        "precipitation": "mm",
+        "vapour_pressure_deficit": "kPa",
+        "soil_moisture_0_to_7cm": "m\u00b3/m\u00b3",
+        "wind_speed_10m": "km/h"
+      }
+    },
+    {
+      "field_id": "KA_TUMAKURU",
+      "latitude_requested": 13.3392,
+      "longitude_requested": 77.113,
+      "latitude_grid": 13.321617,
+      "longitude_grid": 77.09589,
+      "elevation_m": 821.0,
+      "timezone": "Asia/Kolkata",
+      "timezone_abbreviation": "GMT+5:30",
+      "utc_offset_seconds": 19800,
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "\u00b0C",
+        "relative_humidity_2m": "%",
+        "dew_point_2m": "\u00b0C",
+        "precipitation": "mm",
+        "vapour_pressure_deficit": "kPa",
+        "soil_moisture_0_to_7cm": "m\u00b3/m\u00b3",
+        "wind_speed_10m": "km/h"
+      }
+    },
+    {
+      "field_id": "KA_HASSAN",
+      "latitude_requested": 13.0033,
+      "longitude_requested": 76.1004,
+      "latitude_grid": 12.970123,
+      "longitude_grid": 76.090904,
+      "elevation_m": 944.0,
+      "timezone": "Asia/Kolkata",
+      "timezone_abbreviation": "GMT+5:30",
+      "utc_offset_seconds": 19800,
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "\u00b0C",
+        "relative_humidity_2m": "%",
+        "dew_point_2m": "\u00b0C",
+        "precipitation": "mm",
+        "vapour_pressure_deficit": "kPa",
+        "soil_moisture_0_to_7cm": "m\u00b3/m\u00b3",
+        "wind_speed_10m": "km/h"
+      }
+    },
+    {
+      "field_id": "KA_SHIVAMOGGA",
+      "latitude_requested": 13.9299,
+      "longitude_requested": 75.5681,
+      "latitude_grid": 13.954306,
+      "longitude_grid": 75.58011,
+      "elevation_m": 585.0,
+      "timezone": "Asia/Kolkata",
+      "timezone_abbreviation": "GMT+5:30",
+      "utc_offset_seconds": 19800,
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "\u00b0C",
+        "relative_humidity_2m": "%",
+        "dew_point_2m": "\u00b0C",
+        "precipitation": "mm",
+        "vapour_pressure_deficit": "kPa",
+        "soil_moisture_0_to_7cm": "m\u00b3/m\u00b3",
+        "wind_speed_10m": "km/h"
+      }
+    },
+    {
+      "field_id": "KA_BELAGAVI",
+      "latitude_requested": 15.8497,
+      "longitude_requested": 74.4977,
+      "latitude_grid": 15.852372,
+      "longitude_grid": 74.53258,
+      "elevation_m": 774.0,
+      "timezone": "Asia/Kolkata",
+      "timezone_abbreviation": "GMT+5:30",
+      "utc_offset_seconds": 19800,
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "\u00b0C",
+        "relative_humidity_2m": "%",
+        "dew_point_2m": "\u00b0C",
+        "precipitation": "mm",
+        "vapour_pressure_deficit": "kPa",
+        "soil_moisture_0_to_7cm": "m\u00b3/m\u00b3",
+        "wind_speed_10m": "km/h"
+      }
+    },
+    {
+      "field_id": "KA_DHARWAD",
+      "latitude_requested": 15.4589,
+      "longitude_requested": 75.0078,
+      "latitude_grid": 15.43058,
+      "longitude_grid": 75.04225,
+      "elevation_m": 730.0,
+      "timezone": "Asia/Kolkata",
+      "timezone_abbreviation": "GMT+5:30",
+      "utc_offset_seconds": 19800,
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "\u00b0C",
+        "relative_humidity_2m": "%",
+        "dew_point_2m": "\u00b0C",
+        "precipitation": "mm",
+        "vapour_pressure_deficit": "kPa",
+        "soil_moisture_0_to_7cm": "m\u00b3/m\u00b3",
+        "wind_speed_10m": "km/h"
+      }
+    },
+    {
+      "field_id": "KA_KALABURAGI",
+      "latitude_requested": 17.3297,
+      "longitude_requested": 76.8343,
+      "latitude_grid": 17.328646,
+      "longitude_grid": 76.82081,
+      "elevation_m": 454.0,
+      "timezone": "Asia/Kolkata",
+      "timezone_abbreviation": "GMT+5:30",
+      "utc_offset_seconds": 19800,
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "\u00b0C",
+        "relative_humidity_2m": "%",
+        "dew_point_2m": "\u00b0C",
+        "precipitation": "mm",
+        "vapour_pressure_deficit": "kPa",
+        "soil_moisture_0_to_7cm": "m\u00b3/m\u00b3",
+        "wind_speed_10m": "km/h"
+      }
+    },
+    {
+      "field_id": "KA_BALLARI",
+      "latitude_requested": 15.1394,
+      "longitude_requested": 76.9214,
+      "latitude_grid": 15.1493845,
+      "longitude_grid": 76.95042,
+      "elevation_m": 455.0,
+      "timezone": "Asia/Kolkata",
+      "timezone_abbreviation": "GMT+5:30",
+      "utc_offset_seconds": 19800,
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "\u00b0C",
+        "relative_humidity_2m": "%",
+        "dew_point_2m": "\u00b0C",
+        "precipitation": "mm",
+        "vapour_pressure_deficit": "kPa",
+        "soil_moisture_0_to_7cm": "m\u00b3/m\u00b3",
+        "wind_speed_10m": "km/h"
+      }
+    }
+  ]
+}

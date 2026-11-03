@@ -1,0 +1,32 @@
+{
+  "event_id": "4d264255-e127-484d-94c8-ee076d4aa4b5",
+  "schema_version": "1.0.0",
+  "event_time": "2026-11-01T20:00:00Z",
+  "ingestion_time": "2026-11-01T20:00:01Z",
+  "field_id": "KA_KOLAR_RAGI_01",
+  "idempotency_key": "open_meteo_forecast_kolar_2026110120_h24",
+  "correlation_id": "corr-nwp-forecast-024",
+  "source_provider": "open_meteo_forecast",
+  "forecast_reference_time": "2026-11-01T12:00:00Z",
+  "forecast_horizon_hours": 24,
+  "temperature_2m_c": 28.5,
+  "relative_humidity_2m_pct": 65.0,
+  "dew_point_2m_c": 21.2,
+  "precipitation_mm": 2.5,
+  "wind_speed_10m_mps": 3.4,
+  "solar_radiation_w_m2": 450.0,
+  "reanalysis_soil_moisture_0_7cm": 0.22,
+  "location": {
+    "latitude": 13.13,
+    "longitude": 78.13,
+    "elevation_m": 822.0
+  },
+  "provenance": {
+    "provenance_class": "forecast",
+    "dataset_origin": "Open-Meteo-NWP-Ensemble",
+    "is_synthetic": false,
+    "scenario_id": null,
+    "source_uri": "https://api.open-meteo.com/v1/forecast?latitude=13.13&longitude=78.13",
+    "raw_payload_hash": "sha256-d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0"
+  }
+}

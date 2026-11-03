@@ -1,0 +1,80 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Live Source Freshness Latency (Seconds Elapsed Since Measurement)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 14, "x": 0, "y": 0},
+      "targets": [
+        {"expr": "agri_ingestion_source_freshness_seconds", "legendFormat": "{{adapter}} [{{station_id}}]"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 90}, {"color": "red", "value": 300}]}
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Adapter Operational Status",
+      "type": "stat",
+      "gridPos": {"h": 8, "w": 10, "x": 14, "y": 0},
+      "targets": [
+        {"expr": "agri_ingestion_adapter_status", "legendFormat": "{{adapter}}"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {"type": "value", "options": {"0": {"text": "STOPPED", "color": "red"}, "1": {"text": "RUNNING", "color": "green"}}}
+          ],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 1}]}
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "External Polling Request Latency (p95 Seconds)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "targets": [
+        {"expr": "histogram_quantile(0.95, sum by (le, adapter) (rate(agri_ingestion_request_duration_seconds_bucket[1m])))", "legendFormat": "p95: {{adapter}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s", "custom": {"drawStyle": "line"}}}
+    },
+    {
+      "id": 4,
+      "title": "Rate Limit (HTTP 429) Events",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 6, "x": 12, "y": 8},
+      "targets": [
+        {"expr": "sum by (adapter) (rate(agri_ingestion_rate_limit_hits_total[1m]))", "legendFormat": "429 Rate: {{adapter}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "cps", "color": {"mode": "palette-classic"}}}
+    },
+    {
+      "id": 5,
+      "title": "Total Records Ingested by Source Type",
+      "type": "piechart",
+      "gridPos": {"h": 8, "w": 6, "x": 18, "y": 8},
+      "targets": [
+        {"expr": "sum by (source_type) (agri_ingestion_records_total)", "legendFormat": "{{source_type}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}}
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "tags": ["agrikafka", "ingestion", "sources", "freshness"],
+  "timezone": "browser",
+  "title": "04 - Ingestion & Source Freshness",
+  "uid": "agri-04-ingestion-source-freshness"
+}
+

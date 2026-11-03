@@ -1,0 +1,37 @@
+{
+  "event_id": "f815cd95-4658-4b49-a96b-2c8bd99e6c5c",
+  "schema_version": "1.0.0",
+  "event_time": "2026-11-01T16:00:15Z",
+  "ingestion_time": "2026-11-01T16:00:16Z",
+  "field_id": "KA_KOLAR_RAGI_01",
+  "idempotency_key": "investigation_alert_kolar_moisture_def_20261101",
+  "correlation_id": "corr-risk-pipeline-301",
+  "alert_id": "alert-kolar-moisture-def-20261101",
+  "decision": "ADVISORY_ISSUED",
+  "is_escalated": true,
+  "investigation_steps_executed": 4,
+  "tools_invoked": [
+    "get_field_telemetry_history",
+    "inspect_sensor_health_diagnostics",
+    "query_agronomic_knowledge_base",
+    "synthesize_risk_triage"
+  ],
+  "citations": [
+    "ICAR Package of Practices for Dryland Agriculture - Finger Millet (UAS Bangalore, 2023, Ch. 4: Water Management)",
+    "FAO Irrigation and Drainage Paper No. 56, Crop Evapotranspiration - Guidelines for Computing Crop Water Requirements (Table 22: Ragi Kc values)"
+  ],
+  "draft_advisory_kannada": "ನಿಮ್ಮ ರಾಗಿ ಬೆಳೆಯಲ್ಲಿ ಹೂಬಿಡುವ ಹಂತದಲ್ಲಿ ಮಣ್ಣಿನ ತೇವಾಂಶವು 11.2% ಕ್ಕೆ ಇಳಿದಿದೆ. ಇಳುವರಿ ನಷ್ಟ ತಪ್ಪಿಸಲು ಮುಂದಿನ 24 ಗಂಟೆಗಳಲ್ಲಿ 20 ಮಿಮೀ ಲಘು ನೀರಾವರಿ ನೀಡುವುದು ಸೂಕ್ತವಾಗಿದೆ.",
+  "draft_advisory_english": "Soil moisture has depleted past the critical management threshold (p=0.68) during the flowering/grain-filling stage in Red Sandy Loam. Recommend scheduling 20mm supplemental protective irrigation within 24 hours.",
+  "required_human_action": "Authorize 20mm protective drip/sprinkler irrigation for Parcel KA_KOLAR_RAGI_01",
+  "approval_token": "appr_tok_7b19c2f8-9a3e-4d5c-b1e0-6f8a9d0b1c2e",
+  "approval_expires_at": "2026-11-02T04:00:15Z",
+  "used_fallback_engine": false,
+  "provenance": {
+    "provenance_class": "derived",
+    "dataset_origin": "Bounded-Alert-Investigator-Agent",
+    "is_synthetic": false,
+    "scenario_id": null,
+    "source_uri": "urn:agrikafka:services:alert_investigator",
+    "raw_payload_hash": null
+  }
+}

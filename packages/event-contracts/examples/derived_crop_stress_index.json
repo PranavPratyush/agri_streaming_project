@@ -1,0 +1,36 @@
+{
+  "event_id": "86590d81-5d03-44d3-b620-275cde61e955",
+  "schema_version": "1.0.0",
+  "event_time": "2026-11-01T15:00:00Z",
+  "ingestion_time": "2026-11-01T15:00:05Z",
+  "field_id": "KA_KOLAR_RAGI_01",
+  "idempotency_key": "calc_csi_ka_kolar_ragi_01_2026110115",
+  "correlation_id": "corr-csi-pipeline-001",
+  "source_provider": "agri_risk_engine",
+  "sensor_id": null,
+  "station_id": null,
+  "variable": "crop_stress_index",
+  "value": 0.72,
+  "unit": "fraction_0_to_1",
+  "location": {
+    "latitude": 13.13,
+    "longitude": 78.13,
+    "elevation_m": 822.0
+  },
+  "sensor_metadata": null,
+  "quality_flags": {
+    "is_imputed": false,
+    "is_out_of_range": false,
+    "freshness_latency_sec": 5.0,
+    "sensor_health_flag": "HEALTHY"
+  },
+  "validation_status": "VALID",
+  "provenance": {
+    "provenance_class": "derived",
+    "dataset_origin": "Composite-Crop-Stress-Algorithm-v1",
+    "is_synthetic": false,
+    "scenario_id": null,
+    "source_uri": "urn:agrikafka:algorithms:csi_fao56",
+    "raw_payload_hash": null
+  }
+}

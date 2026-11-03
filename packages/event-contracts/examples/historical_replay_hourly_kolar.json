@@ -1,0 +1,36 @@
+{
+  "event_id": "ca44eb1e-6e8d-4d2d-a6d3-a06919a348c3",
+  "schema_version": "1.0.0",
+  "event_time": "2024-11-15T08:00:00Z",
+  "ingestion_time": "2026-11-01T20:05:00Z",
+  "field_id": "KA_TUMAKURU",
+  "idempotency_key": "replay_open_meteo_ka_tumakuru_temp_2024111508",
+  "correlation_id": "corr-replay-batch-042",
+  "source_provider": "historical_replay_harness",
+  "sensor_id": null,
+  "station_id": null,
+  "variable": "temperature_2m",
+  "value": 24.2,
+  "unit": "celsius",
+  "location": {
+    "latitude": 13.3392,
+    "longitude": 77.113,
+    "elevation_m": 821.0
+  },
+  "sensor_metadata": null,
+  "quality_flags": {
+    "is_imputed": false,
+    "is_out_of_range": false,
+    "freshness_latency_sec": null,
+    "sensor_health_flag": "UNKNOWN"
+  },
+  "validation_status": "VALID",
+  "provenance": {
+    "provenance_class": "historical_replay",
+    "dataset_origin": "open_meteo_karnataka_2024-10-05_to_2026-10-04.csv",
+    "is_synthetic": false,
+    "scenario_id": null,
+    "source_uri": "file:///data/open_meteo_karnataka_2024-10-05_to_2026-10-04.csv",
+    "raw_payload_hash": "sha256-e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1"
+  }
+}

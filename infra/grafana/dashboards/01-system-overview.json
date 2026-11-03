@@ -1,0 +1,97 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Kafka Broker State",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 4, "x": 0, "y": 0},
+      "targets": [{"expr": "max(agri_kafka_broker_reachable)", "legendFormat": "Broker"}],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "HEALTHY", "color": "green"}}}
+          ],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 1}]}
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Ingested Telemetry",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 5, "x": 4, "y": 0},
+      "targets": [{"expr": "sum(agri_ingestion_records_total{status=\"success\"})", "legendFormat": "Records"}],
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}, "unit": "short"}}
+    },
+    {
+      "id": 3,
+      "title": "Spark Processed Rows",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 5, "x": 9, "y": 0},
+      "targets": [{"expr": "sum(agri_spark_processed_rows_total)", "legendFormat": "Rows"}],
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}, "unit": "short"}}
+    },
+    {
+      "id": 4,
+      "title": "Candidate Risk Alerts",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 5, "x": 14, "y": 0},
+      "targets": [{"expr": "sum(agri_risk_candidate_alerts_total)", "legendFormat": "Alerts"}],
+      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 5}, {"color": "red", "value": 20}]}}}
+    },
+    {
+      "id": 5,
+      "title": "Dead-Letter Queue (DLQ)",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 5, "x": 19, "y": 0},
+      "targets": [{"expr": "sum(agri_kafka_dlq_messages_total) or vector(0)", "legendFormat": "DLQ Messages"}],
+      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}}}
+    },
+    {
+      "id": 6,
+      "title": "Pipeline Throughput: Ingestion vs Stream Processing (Rows/sec)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 14, "x": 0, "y": 4},
+      "targets": [
+        {"expr": "sum(rate(agri_ingestion_records_total{status=\"success\"}[1m]))", "legendFormat": "Ingestion Rate (records/s)"},
+        {"expr": "sum(rate(agri_spark_processed_rows_total[1m]))", "legendFormat": "Spark Processed Rate (rows/s)"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "cps", "custom": {"drawStyle": "line", "lineInterpolation": "smooth"}}}
+    },
+    {
+      "id": 7,
+      "title": "Component Error Rate (Errors/sec)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 10, "x": 14, "y": 4},
+      "targets": [
+        {"expr": "sum by (adapter) (rate(agri_ingestion_records_total{status=\"failure\"}[1m]))", "legendFormat": "Ingestion Error: {{adapter}}"},
+        {"expr": "sum by (original_topic) (rate(agri_kafka_dlq_messages_total[1m]))", "legendFormat": "DLQ Routing: {{original_topic}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "cps", "color": {"mode": "palette-classic"}}}
+    },
+    {
+      "id": 8,
+      "title": "AgriKafka Service Scrape Targets",
+      "type": "table",
+      "gridPos": {"h": 6, "w": 24, "x": 0, "y": 12},
+      "targets": [
+        {"expr": "up", "format": "table", "instant": true}
+      ],
+      "fieldConfig": {"defaults": {"custom": {"align": "auto"}}}
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "tags": ["agrikafka", "overview", "operations"],
+  "timezone": "browser",
+  "title": "01 - System Overview",
+  "uid": "agri-01-system-overview"
+}
+

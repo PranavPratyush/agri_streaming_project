@@ -1,0 +1,61 @@
+# AgriKafka-Agent — Prometheus Server Configuration
+# Scrapes metrics across ingestion, streaming, sensor health, risk, persistence, and API.
+
+global:
+  scrape_interval: 10s
+  evaluation_interval: 10s
+  scrape_timeout: 8s
+  external_labels:
+    monitor: 'agrikafka-monitor'
+    environment: 'development'
+
+rule_files:
+  - 'alert_rules.yml'
+
+scrape_configs:
+  # Prometheus Self-Monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # Ingestion Service Metrics (Adapter status, freshness, poll latency)
+  - job_name: 'agri-ingestion'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['host.docker.internal:8000']
+        labels:
+          service: 'ingestion'
+
+  # PySpark Structured Streaming Metrics (Input rows, batch duration, watermarks)
+  - job_name: 'agri-stream-processor'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['host.docker.internal:8000']
+        labels:
+          service: 'stream-processor'
+
+  # Deterministic Risk & Sensor Health Engine Metrics
+  - job_name: 'agri-risk-engine'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['host.docker.internal:8000']
+        labels:
+          service: 'risk-engine'
+
+  # TimescaleDB Persistence Consumer Sink Metrics
+  - job_name: 'agri-persistence-sink'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['host.docker.internal:8000']
+        labels:
+          service: 'persistence-sink'
+
+  # Backend FastAPI Service Metrics
+  - job_name: 'agri-backend-api'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['host.docker.internal:8000']
+        labels:
+          service: 'api'

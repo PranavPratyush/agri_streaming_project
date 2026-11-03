@@ -1,0 +1,12 @@
+{
+  "dlq_id": "389a0581-30f1-4373-bb49-c690eb84041a",
+  "failed_topic": "sensor-readings",
+  "source_partition": 1,
+  "source_offset": 8421,
+  "error_reason": "Value -999.0 celsius is outside plausible range [-5.0, 55.0] for 'temperature_2m'",
+  "error_class": "ValidationError",
+  "raw_payload": "{\"sensor_id\": \"probe_99\", \"variable\": \"temperature_2m\", \"value\": -999.0, \"unit\": \"celsius\"}",
+  "failed_at": "2026-11-01T20:10:00Z",
+  "retry_count": 0,
+  "correlation_id": "corr-dead-letter-test-01"
+}

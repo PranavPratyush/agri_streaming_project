@@ -1,0 +1,42 @@
+{
+  "event_id": "8e2c5a9d-5472-4bd7-91c8-7902699644df",
+  "schema_version": "1.0.0",
+  "event_time": "2026-11-01T14:43:14Z",
+  "ingestion_time": "2026-11-01T14:43:15Z",
+  "field_id": "KA_KOLAR_EXTERNAL_01",
+  "idempotency_key": "osm_689b2bdc569c2d0007586ae9_temp_1730472194",
+  "correlation_id": "corr-osm-sarv-20261101",
+  "source_provider": "openSenseMap",
+  "sensor_id": "689b2bdc569c2d0007586aea",
+  "station_id": "689b2bdc569c2d0007586ae9",
+  "variable": "temperature_2m",
+  "value": 25.39,
+  "unit": "celsius",
+  "location": {
+    "latitude": 11.995079,
+    "longitude": 79.804492,
+    "elevation_m": 42.0
+  },
+  "sensor_metadata": {
+    "depth_cm": null,
+    "height_m": 2.0,
+    "canopy_position": "ambient_weather",
+    "sensor_model": "Generic temperature sensor (openSenseMap)",
+    "serial_number": null
+  },
+  "quality_flags": {
+    "is_imputed": false,
+    "is_out_of_range": false,
+    "freshness_latency_sec": 1.0,
+    "sensor_health_flag": "HEALTHY"
+  },
+  "validation_status": "VALID",
+  "provenance": {
+    "provenance_class": "physical_sensor",
+    "dataset_origin": "openSenseMap-Station-Sarvamangalam",
+    "is_synthetic": false,
+    "scenario_id": null,
+    "source_uri": "https://api.opensensemap.org/boxes/689b2bdc569c2d0007586ae9",
+    "raw_payload_hash": "sha256-a1b2c3d4e5f60718293a4b5c6d7e8f90"
+  }
+}

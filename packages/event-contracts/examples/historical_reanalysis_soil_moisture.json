@@ -1,0 +1,36 @@
+{
+  "event_id": "e2defbe0-8b6b-423d-a0bf-dcf69a27576c",
+  "schema_version": "1.0.0",
+  "event_time": "2025-07-15T10:00:00Z",
+  "ingestion_time": "2026-11-01T20:00:00Z",
+  "field_id": "KA_KOLAR_RAGI_01",
+  "idempotency_key": "open_meteo_era5_kolar_soil_2025071510",
+  "correlation_id": "corr-hist-replay-001",
+  "source_provider": "open_meteo_archive",
+  "sensor_id": null,
+  "station_id": null,
+  "variable": "soil_moisture_0_to_7cm",
+  "value": 0.243,
+  "unit": "m3_per_m3",
+  "location": {
+    "latitude": 13.13,
+    "longitude": 78.13,
+    "elevation_m": 822.0
+  },
+  "sensor_metadata": null,
+  "quality_flags": {
+    "is_imputed": false,
+    "is_out_of_range": false,
+    "freshness_latency_sec": null,
+    "sensor_health_flag": "UNKNOWN"
+  },
+  "validation_status": "VALID",
+  "provenance": {
+    "provenance_class": "modelled_reanalysis",
+    "dataset_origin": "Open-Meteo-ERA5-Land-Reanalysis",
+    "is_synthetic": false,
+    "scenario_id": null,
+    "source_uri": "https://archive-api.open-meteo.com/v1/archive?latitude=13.13&longitude=78.13",
+    "raw_payload_hash": "sha256-b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8"
+  }
+}

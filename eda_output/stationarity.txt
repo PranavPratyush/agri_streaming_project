@@ -1,0 +1,26 @@
+Representative field: KA_BALLARI
+Daily soil moisture observations: 730
+ADF statistic: -3.694319
+ADF p-value: 0.00419377
+ADF critical values: {'1%': np.float64(-3.4394522667904153), '5%': np.float64(-2.8655569894909805), '10%': np.float64(-2.568909106765338)}
+Stationarity: Stationary (Reject H0)
+
+Hourly Autocorrelation - Soil Moisture:
+  lag_1h: 0.9964
+  lag_2h: 0.9926
+  lag_6h: 0.9784
+  lag_12h: 0.9612
+  lag_24h: 0.9414
+  lag_48h: 0.8921
+  lag_72h: 0.8423
+  lag_168h: 0.6906
+
+Hourly Autocorrelation - Temperature:
+  lag_1h: 0.9699
+  lag_2h: 0.901
+  lag_6h: 0.4112
+  lag_12h: -0.045
+  lag_24h: 0.9645
+  lag_48h: 0.9499
+  lag_72h: 0.9386
+  lag_168h: 0.9104

@@ -1,0 +1,63 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Topic Throughput (Produced Messages/sec)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "targets": [
+        {"expr": "sum by (topic) (rate(agri_kafka_messages_produced_total[1m]))", "legendFormat": "{{topic}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "cps", "custom": {"drawStyle": "line"}}}
+    },
+    {
+      "id": 2,
+      "title": "Consumer Group Consumption Rate (Messages/sec)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "targets": [
+        {"expr": "sum by (consumer_group, topic) (rate(agri_kafka_messages_consumed_total[1m]))", "legendFormat": "{{consumer_group}} [{{topic}}]"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "cps", "custom": {"drawStyle": "line"}}}
+    },
+    {
+      "id": 3,
+      "title": "Consumer Group Lag (Records Backlog)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 14, "x": 0, "y": 8},
+      "targets": [
+        {"expr": "sum by (consumer_group, topic) (agri_kafka_consumer_lag_records)", "legendFormat": "{{consumer_group}} - {{topic}}"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 100}, {"color": "red", "value": 500}]}
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Dead-Letter Queue Volume by Reason",
+      "type": "barchart",
+      "gridPos": {"h": 8, "w": 10, "x": 14, "y": 8},
+      "targets": [
+        {"expr": "sum by (reason_code) (agri_kafka_dlq_messages_total)", "legendFormat": "{{reason_code}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short", "color": {"mode": "palette-classic"}}}
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "tags": ["agrikafka", "kafka", "streaming"],
+  "timezone": "browser",
+  "title": "02 - Kafka & Consumer Groups",
+  "uid": "agri-02-kafka-and-consumer-groups"
+}
+

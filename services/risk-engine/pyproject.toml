@@ -1,0 +1,19 @@
+[project]
+name = "agri-risk-engine"
+version = "0.1.0"
+description = "AgriKafka-Agent Deterministic Sensor Health Forensics and Agronomic Risk Engine"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.7.0",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "agri-event-contracts",
+]
+
+[tool.uv.sources]
+agri-event-contracts = { workspace = true }
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+

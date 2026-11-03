@@ -1,0 +1,31 @@
+# AgriKafka-Agent — Grafana Datasource Provisioning
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      timeInterval: 15s
+      httpMethod: POST
+
+  - name: TimescaleDB
+    type: postgres
+    access: proxy
+    url: timescaledb:5432
+    user: ${AGRI_READONLY_USER:-agri_readonly}
+    secureJsonData:
+      password: ${AGRI_READONLY_PASSWORD:-agri_readonly_password_insecure}
+    database: ${POSTGRES_DB:-agrikafka}
+    editable: false
+    jsonData:
+      sslmode: disable
+      maxOpenConns: 5
+      maxIdleConns: 2
+      connMaxLifetime: 14400
+      postgresVersion: 1600
+      timescaledb: true
+

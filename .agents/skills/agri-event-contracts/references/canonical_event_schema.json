@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgriKafkaCanonicalObservationEvent",
+  "description": "Canonical schema for environmental telemetry and observation events in AgriKafka-Agent",
+  "type": "object",
+  "required": [
+    "event_id",
+    "source",
+    "source_type",
+    "event_time",
+    "ingestion_time",
+    "field_id",
+    "sensor_id",
+    "variable",
+    "value",
+    "unit",
+    "provenance"
+  ],
+  "properties": {
+    "event_id": { "type": "string", "format": "uuid" },
+    "source": { "type": "string" },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "physical_sensor",
+        "weather_station",
+        "reanalysis_model",
+        "numerical_forecast",
+        "derived_calculation",
+        "historical_replay",
+        "injected_fault",
+        "injected_stress"
+      ]
+    },
+    "event_time": { "type": "string", "format": "date-time" },
+    "ingestion_time": { "type": "string", "format": "date-time" },
+    "field_id": { "type": "string" },
+    "sensor_id": { "type": "string" },
+    "variable": {
+      "type": "string",
+      "enum": [
+        "temperature_2m",
+        "relative_humidity_2m",
+        "dew_point_2m",
+        "precipitation",
+        "vapour_pressure_deficit",
+        "soil_moisture_0_to_7cm",
+        "soil_moisture_depth",
+        "wind_speed_10m",
+        "leaf_wetness_proxy",
+        "crop_stress_index"
+      ]
+    },
+    "value": { "type": "number" },
+    "unit": {
+      "type": "string",
+      "enum": ["celsius", "percent", "mm_per_hour", "kpa", "m3_per_m3", "m_per_s", "unitless", "fraction_0_to_1"]
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "elevation_m": { "type": "number" }
+      }
+    },
+    "quality_flags": {
+      "type": "object",
+      "properties": {
+        "is_imputed": { "type": "boolean", "default": false },
+        "is_out_of_range": { "type": "boolean", "default": false },
+        "sensor_health_flag": { "type": "string", "default": "UNKNOWN" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["dataset_origin", "is_synthetic"],
+      "properties": {
+        "dataset_origin": { "type": "string" },
+        "is_synthetic": { "type": "boolean" },
+        "scenario_id": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

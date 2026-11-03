@@ -1,0 +1,42 @@
+{
+  "event_id": "6fa98ae7-31f8-46a6-a215-707b35d5aa2c",
+  "schema_version": "1.0.0",
+  "event_time": "2026-11-01T14:43:11Z",
+  "ingestion_time": "2026-11-01T14:43:12Z",
+  "field_id": "KA_KOLAR_EXTERNAL_01",
+  "idempotency_key": "osm_aurovanam_solar_1730472191",
+  "correlation_id": "corr-osm-auro-20261101",
+  "source_provider": "openSenseMap",
+  "sensor_id": null,
+  "station_id": "68a93536e035980007f6036b",
+  "variable": "solar_radiation",
+  "value": 607.3,
+  "unit": "w_per_m2",
+  "location": {
+    "latitude": 11.967608,
+    "longitude": 79.76191,
+    "elevation_m": 50.0
+  },
+  "sensor_metadata": {
+    "depth_cm": null,
+    "height_m": 2.5,
+    "canopy_position": "ambient_weather",
+    "sensor_model": "Solar Radiation Pyranometer (openSenseMap)",
+    "serial_number": null
+  },
+  "quality_flags": {
+    "is_imputed": false,
+    "is_out_of_range": false,
+    "freshness_latency_sec": 1.0,
+    "sensor_health_flag": "HEALTHY"
+  },
+  "validation_status": "VALID",
+  "provenance": {
+    "provenance_class": "external_station",
+    "dataset_origin": "openSenseMap-Station-Aurovanam",
+    "is_synthetic": false,
+    "scenario_id": null,
+    "source_uri": "https://api.opensensemap.org/boxes/68a93536e035980007f6036b",
+    "raw_payload_hash": "sha256-c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9"
+  }
+}

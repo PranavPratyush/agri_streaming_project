@@ -1,0 +1,76 @@
+# Python Virtual Environments
+.venv/
+.venv*/
+venv/
+ENV/
+env/
+*.venv
+
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Jupyter & Notebooks
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# Node.js & PWA
+node_modules/
+dist/
+build/
+.npm/
+.eslintcache
+
+# Environment Variables & Secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+secrets/
+
+# Datasets (Large CSV / NetCDF / GeoTIFF)
+data/*.csv
+data/historical/*.csv
+data/scenarios/*.csv
+*.parquet
+*.h5
+
+# Vector Stores & Local Models
+knowledge/chroma_db/
+knowledge/embeddings/
+models/
+*.bin
+*.onnx
+
+# Streaming Checkpoints & Persistence
+checkpoints/
+spark-checkpoints/
+.replay_checkpoint_*.json
+infra/kafka/data/
+infra/timescale/data/
+infra/grafana/data/
+
+# IDE & Editor Specific
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+
+# Logs & Temporary Files
+*.log
+logs/
+tmp/
+scratch/

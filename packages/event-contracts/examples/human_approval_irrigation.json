@@ -1,0 +1,24 @@
+{
+  "event_id": "2c7d82bb-117a-41e7-af5a-69b555ca8e57",
+  "schema_version": "1.0.0",
+  "event_time": "2026-11-01T16:15:00Z",
+  "ingestion_time": "2026-11-01T16:15:01Z",
+  "field_id": "KA_KOLAR_RAGI_01",
+  "idempotency_key": "human_decision_alert_kolar_moisture_def_20261101",
+  "correlation_id": "corr-risk-pipeline-301",
+  "alert_id": "alert-kolar-moisture-def-20261101",
+  "approval_token": "appr_tok_7b19c2f8-9a3e-4d5c-b1e0-6f8a9d0b1c2e",
+  "decision": "APPROVED",
+  "operator_id": "farmer_narayanappa_kolar",
+  "feedback_notes": "Approved 20mm supplemental irrigation via borewell drip line starting 17:00 IST.",
+  "modified_action": null,
+  "decision_timestamp": "2026-11-01T16:15:00Z",
+  "provenance": {
+    "provenance_class": "derived",
+    "dataset_origin": "Farmer-PWA-Client",
+    "is_synthetic": false,
+    "scenario_id": null,
+    "source_uri": "urn:agrikafka:clients:farmer_pwa",
+    "raw_payload_hash": null
+  }
+}

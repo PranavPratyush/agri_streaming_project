@@ -1,0 +1,15 @@
+# AgriKafka-Agent — Grafana Dashboard Provider Provisioning
+apiVersion: 1
+
+providers:
+  - name: 'agrikafka-dashboards'
+    orgId: 1
+    folder: 'AgriKafka-Operations'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/dashboards
+      foldersFromFilesStructure: false
+

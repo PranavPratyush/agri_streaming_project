@@ -1,0 +1,66 @@
+# AgriKafka-Agent — Prometheus Operational Alert Rules
+# Defines actionable alert thresholds for pipeline degradations, outages, and risk spikes.
+
+groups:
+  - name: agrikafka_pipeline_alerts
+    rules:
+      # 1. Service Down / Connectivity Failure
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Core service {{ $labels.service }} is unreachable"
+          description: "Service {{ $labels.service }} has been down for more than 1 minute."
+
+      # 2. Stale Telemetry Ingestion
+      - alert: StaleSourceTelemetry
+        expr: agri_ingestion_source_freshness_seconds > 300
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Telemetry from {{ $labels.adapter }} station {{ $labels.station_id }} is stale"
+          description: "Freshness latency exceeds 300 seconds (currently {{ $value | humanizeDuration }})."
+
+      # 3. Sustained Kafka Consumer Lag
+      - alert: SustainedConsumerLag
+        expr: agri_kafka_consumer_lag_records > 500
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Consumer group {{ $labels.consumer_group }} has high lag on {{ $labels.topic }}"
+          description: "Unprocessed message backlog exceeds 500 records for over 3 minutes."
+
+      # 4. PySpark Micro-Batch Checkpoint Failures
+      - alert: RepeatedSparkMicroBatchFailures
+        expr: rate(agri_spark_checkpoint_commits_total{status="failure"}[5m]) > 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PySpark Structured Streaming query {{ $labels.query_name }} is failing checkpoint commits"
+          description: "Micro-batch failures detected in query {{ $labels.query_name }}."
+
+      # 5. Dead-Letter Queue Growth
+      - alert: DeadLetterQueueGrowth
+        expr: increase(agri_kafka_dlq_messages_total[5m]) > 5
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dead-Letter Queue message volume is rising"
+          description: "More than 5 invalid or corrupt messages routed to DLQ in the last 5 minutes (reason: {{ $labels.reason_code }})."
+
+      # 6. Critical Crop Stress Index Spike
+      - alert: CriticalCropStressIndex
+        expr: agri_risk_composite_stress_index > 0.85
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical crop stress detected for field {{ $labels.field_id }}"
+          description: "Composite Crop Stress Index (CSI) has exceeded 0.85 for 15 minutes."
+

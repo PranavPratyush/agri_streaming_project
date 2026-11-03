@@ -1,0 +1,59 @@
+[project]
+name = "agri-streaming-project"
+version = "0.1.0"
+description = "AgriKafka-Agent: Fault-Tolerant, Real-Time Agricultural Risk Monitoring and Decision Support"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Aanish Khan" },
+    { name = "Daksh Chauhan" },
+    { name = "Pranav Pratyush" }
+]
+dependencies = [
+    "confluent-kafka>=2.5.0",
+    "pydantic>=2.7.0",
+    "pytest>=7.0.0",
+    "psycopg[binary]>=3.2.0",
+    "psycopg-pool>=3.2.0",
+]
+
+[tool.uv.workspace]
+members = [
+    "packages/event-contracts",
+    "packages/database-client",
+    "packages/shared-python",
+    "services/ingestion",
+    "services/stream-processor",
+    "services/risk-engine",
+]
+
+[tool.uv.sources]
+agri-event-contracts = { workspace = true }
+agri-persistence = { workspace = true }
+agri-shared = { workspace = true }
+agri-ingestion = { workspace = true }
+agri-stream-processor = { workspace = true }
+agri-risk-engine = { workspace = true }
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q -p no:asyncio"
+testpaths = [
+    "tests"
+]
+pythonpath = [
+    ".",
+    "packages/event-contracts/src",
+    "packages/database-client/src",
+    "packages/shared-python/src",
+    "services/ingestion/src",
+    "services/stream-processor/src",
+    "services/risk-engine/src",
+]
+python_files = [
+    "test_*.py"
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

@@ -1,0 +1,65 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Evaluated Forensic Health States Distribution",
+      "type": "piechart",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0},
+      "targets": [
+        {"expr": "sum by (health_state) (agri_sensor_health_evaluations_total)", "legendFormat": "{{health_state}}"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "mappings": [
+            {"type": "value", "options": {"healthy": {"color": "green"}, "faulty": {"color": "red"}, "stale": {"color": "orange"}, "suspect": {"color": "yellow"}}}
+          ]
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Forensic Anomaly Reason Codes",
+      "type": "barchart",
+      "gridPos": {"h": 8, "w": 16, "x": 8, "y": 0},
+      "targets": [
+        {"expr": "sum by (reason_code) (agri_sensor_health_evaluations_total)", "legendFormat": "{{reason_code}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short", "color": {"mode": "palette-classic"}}}
+    },
+    {
+      "id": 3,
+      "title": "Natural Flatline Differentiations (False-Alarm Exemptions)",
+      "type": "stat",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "targets": [
+        {"expr": "sum by (exemption_type) (agri_sensor_flatline_exemptions_total)", "legendFormat": "{{exemption_type}}"}
+      ],
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}, "unit": "short"}}
+    },
+    {
+      "id": 4,
+      "title": "Advisory Safety Gate Blocks (Unreliable Data Suppressed)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "targets": [
+        {"expr": "sum by (reason_code) (rate(agri_advisory_safety_gate_blocks_total[1m]))", "legendFormat": "Gate Block: {{reason_code}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "cps", "color": {"mode": "palette-classic"}}}
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "tags": ["agrikafka", "quality", "sensor-health", "forensics"],
+  "timezone": "browser",
+  "title": "05 - Data Quality & Sensor Health",
+  "uid": "agri-05-data-quality-sensor-health"
+}
+

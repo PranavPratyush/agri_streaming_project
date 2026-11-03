@@ -1,0 +1,29 @@
+{
+  "event_id": "0cde2f33-d9ff-481c-90a6-e7fd88ff0a31",
+  "schema_version": "1.0.0",
+  "event_time": "2026-11-01T16:00:00Z",
+  "ingestion_time": "2026-11-01T16:00:03Z",
+  "field_id": "KA_KOLAR_RAGI_01",
+  "idempotency_key": "risk_alert_ka_kolar_ragi_moisture_2026110116",
+  "correlation_id": "corr-risk-pipeline-301",
+  "alert_id": "alert-kolar-moisture-def-20261101",
+  "crop_name": "Finger Millet (Ragi - Eleusine coracana)",
+  "growth_stage": "flowering_grain_filling",
+  "risk_type": "SOIL_MOISTURE_DEFICIT",
+  "risk_level": "HIGH",
+  "composite_stress_index": 0.78,
+  "soil_depletion_fraction": 0.68,
+  "current_soil_moisture_m3_m3": 0.112,
+  "current_temperature_c": 31.4,
+  "current_vpd_kpa": 2.85,
+  "triggered_threshold": "Depletion p > 0.60 during critical grain-filling stage for Red Sandy Loam (AWC=10%)",
+  "evidence_summary": "Root zone soil moisture dropped to 11.2% in Red Sandy Loam (RAW exhausted; stress threshold is 12.0%). VPD elevated at 2.85 kPa.",
+  "provenance": {
+    "provenance_class": "derived",
+    "dataset_origin": "FAO56-DualKc-RiskEngine",
+    "is_synthetic": false,
+    "scenario_id": null,
+    "source_uri": "urn:agrikafka:services:risk_engine",
+    "raw_payload_hash": null
+  }
+}

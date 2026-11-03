@@ -1,0 +1,82 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Field Composite Crop Stress Index (CSI)",
+      "type": "gauge",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0},
+      "targets": [
+        {"expr": "agri_risk_composite_stress_index", "legendFormat": "Field: {{field_id}}"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 0.40},
+              {"color": "orange", "value": 0.65},
+              {"color": "red", "value": 0.85}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Candidate Crop Stress Alerts by Severity",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 16, "x": 8, "y": 0},
+      "targets": [
+        {"expr": "sum by (severity, risk_type) (rate(agri_risk_candidate_alerts_total[1m]))", "legendFormat": "{{severity}} - {{risk_type}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "cps", "color": {"mode": "palette-classic"}}}
+    },
+    {
+      "id": 3,
+      "title": "Investigator Agent Tool Invocations",
+      "type": "barchart",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "targets": [
+        {"expr": "sum by (tool_name) (agri_investigator_tool_calls_total)", "legendFormat": "{{tool_name}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short", "color": {"mode": "palette-classic"}}}
+    },
+    {
+      "id": 4,
+      "title": "Agent Investigation Latency (p95 Seconds)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 6, "x": 12, "y": 8},
+      "targets": [
+        {"expr": "histogram_quantile(0.95, sum by (le, model) (rate(agri_investigator_duration_seconds_bucket[1m])))", "legendFormat": "p95: {{model}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s", "custom": {"drawStyle": "line"}}}
+    },
+    {
+      "id": 5,
+      "title": "Rule-Engine Fallback Rate (Triage Fallback)",
+      "type": "stat",
+      "gridPos": {"h": 8, "w": 6, "x": 18, "y": 8},
+      "targets": [
+        {"expr": "sum by (fallback_reason) (agri_investigator_fallback_rate_total)", "legendFormat": "{{fallback_reason}}"}
+      ],
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}, "unit": "short"}}
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "tags": ["agrikafka", "risk", "alerts", "agent", "investigator"],
+  "timezone": "browser",
+  "title": "06 - Candidate Alerts & Investigator",
+  "uid": "agri-06-candidate-alerts-investigator"
+}
+

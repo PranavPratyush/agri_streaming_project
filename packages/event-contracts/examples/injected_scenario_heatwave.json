@@ -1,0 +1,42 @@
+{
+  "event_id": "6106b00e-7c88-4260-988c-dbe9ca12a014",
+  "schema_version": "1.0.0",
+  "event_time": "2026-11-01T12:00:00Z",
+  "ingestion_time": "2026-11-01T12:00:01Z",
+  "field_id": "KA_KOLAR_RAGI_01",
+  "idempotency_key": "sim_heatwave_01_ka_kolar_2026110112",
+  "correlation_id": "corr-scenario-drill-03",
+  "source_provider": "scenario_injector",
+  "sensor_id": "kolar_probe_01",
+  "station_id": null,
+  "variable": "temperature_2m",
+  "value": 43.8,
+  "unit": "celsius",
+  "location": {
+    "latitude": 13.13,
+    "longitude": 78.13,
+    "elevation_m": 822.0
+  },
+  "sensor_metadata": {
+    "depth_cm": null,
+    "height_m": 1.5,
+    "canopy_position": "above_canopy",
+    "sensor_model": "Simulated Air Temp Probe v1",
+    "serial_number": "SIM-TEMP-998"
+  },
+  "quality_flags": {
+    "is_imputed": false,
+    "is_out_of_range": false,
+    "freshness_latency_sec": 1.0,
+    "sensor_health_flag": "HEALTHY"
+  },
+  "validation_status": "VALID",
+  "provenance": {
+    "provenance_class": "injected_scenario",
+    "dataset_origin": "Scenario-Harness-Heatwave-Tasseling",
+    "is_synthetic": true,
+    "scenario_id": "SCENARIO_SEVERE_HEATWAVE_GRAIN_FILL_01",
+    "source_uri": "urn:agrikafka:scenarios:heatwave_01",
+    "raw_payload_hash": null
+  }
+}

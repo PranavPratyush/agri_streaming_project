@@ -1,0 +1,44 @@
+============================================================
+SMART AGRICULTURE STREAMING READINESS SPECIFICATION
+============================================================
+
+Virtual Fields Count: 10
+Total Observation Records: 175,200
+Start Timestamp: 2024-10-05 00:00:00
+End Timestamp: 2026-10-04 23:00:00
+Total Dataset Duration (Source Hours): 17,520 hours (730.0 days / 2.00 years)
+
+STREAMING REPLAY CHARACTERISTICS:
+  - Real-world production rate: 10 events/hour (1 event/field/hour)
+  - Nominal replay assumption: 1 source hour = 1 real second
+  - Nominal streaming ingestion throughput: 10 events/second
+  - Accelerated replay (10x, 1 source hour = 100ms): 100 events/second
+  - Accelerated replay (60x, 1 source min = 1 sec): 600 events/second
+  - Total run duration at nominal 1x replay: 17520 seconds (~4.87 hours)
+
+RECOMMENDED STREAMING WINDOW CONFIGURATIONS:
+  1. Tumbling 1-Hour Window:
+     - Purpose: Freshness validation, physical limit checks, multi-parameter packet assembly.
+     - Latency budget: Immediate upon hourly arrival.
+  2. Sliding 6-Hour Window (Slide = 1 Hour):
+     - Purpose: Rapid rate-of-change detection (e.g. abrupt soil drying, temperature spike).
+  3. Hopping / Tumbling 24-Hour Window:
+     - Purpose: Diurnal cycle baseline calculation, daily precipitation accumulation, min/max temperatures, EWMA reference.
+  4. Hopping / Tumbling 72-Hour Window:
+     - Purpose: Cumulative rainfall-to-soil-moisture response tracking, multi-day drought stress detection.
+
+STREAMING PAYLOAD SCHEMA (JSON):
+{
+  "field_id": "KA_BENGALURU",
+  "timestamp": "2024-10-05T00:00:00",
+  "temperature_2m": 22.4,
+  "relative_humidity_2m": 88,
+  "dew_point_2m": 20.3,
+  "precipitation": 0.0,
+  "vapour_pressure_deficit": 0.33,
+  "soil_moisture_0_to_7cm": 0.342,
+  "wind_speed_10m": 8.5,
+  "latitude_grid": 12.9701,
+  "longitude_grid": 77.5636,
+  "elevation_m": 910.0
+}
