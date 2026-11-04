@@ -1,0 +1,116 @@
+/* Modern Mobile-First Accessible PWA Stylesheet */
+:root {
+  --primary-50: #f0fdf4;
+  --primary-100: #dcfce7;
+  --primary-500: #22c55e;
+  --primary-700: #15803d;
+  --primary-800: #166534;
+  --primary-900: #14532d;
+  --surface-bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --warning-bg: #fefce8;
+  --warning-text: #854d0e;
+  --danger-bg: #fef2f2;
+  --danger-text: #991b1b;
+  --info-bg: #eff6ff;
+  --info-text: #1e40af;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  background-color: var(--surface-bg);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a, button, input, select, textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* Touch targets at least 44x44px for accessibility */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus visibility for keyboard navigation */
+:focus-visible {
+  outline: 3px solid #16a34a;
+  outline-offset: 2px;
+}
+
+/* Responsive Container */
+.app-container {
+  max-width: 768px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  position: relative;
+  padding-bottom: 72px; /* Space for bottom nav */
+}
+
+/* Common Card */
+.card {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+}
+
+.card:hover {
+  border-color: #cbd5e1;
+}
+
+/* Headings */
+h1 { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+h2 { font-size: 1.25rem; font-weight: 600; color: #1e293b; margin-bottom: 6px; }
+h3 { font-size: 1.1rem; font-weight: 600; color: #334155; margin-bottom: 4px; }
+
+/* Grid Utilities */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .grid-2-mobile-stack {
+    grid-template-columns: 1fr;
+  }
+}
+

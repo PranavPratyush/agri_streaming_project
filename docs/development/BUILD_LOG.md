@@ -1036,3 +1036,364 @@ This document records the stage-by-stage evolution of the AgriKafka-Agent projec
 
 
 
+
+---
+
+## Entry 016: Stage 15 — Agronomy Corpus Ingestion & Chroma Vector DB
+
+- **Date:** 2026-11-04
+- **Phase:** Phase IV — Agentic AI Alert Investigator & Knowledge Retrieval
+- **Domain:** Agronomy Knowledge Base, Semantic Chunking, Dense Vector Embeddings & Standalone Retrieval Service
+- **Status:** PASS
+
+### 1. Requirements Addressed
+- Curate and register authoritative agronomy sources (`knowledge/source-register.csv`) without fabrication, covering FAO-56, ICAR-AICRP, UAS Bangalore Package of Practices, TNAU Agritech portal, and ICAR-CRIDA Kolar contingency plans.
+- Ingest un-paywalled, domain-grounded markdown documents under `knowledge/corpus/` focusing on finger millet (*Eleusine coracana*, Ragi GPU-28) in Karnataka Zone 5 (Kolar) red sandy loam (Alfisols).
+- Implement standalone retrieval package `packages/agronomy-rag/` (`src/agri_agronomy_rag`) with:
+  1. Semantic heading-aware chunking preserving document boundaries and injecting context headers.
+  2. Deterministic citation IDs (`{source_id}:SEC{sec}:CH{idx}`).
+  3. Offline-first dense vector embeddings using `all-MiniLM-L6-v2` (384 dimensions) via ONNX Runtime CPU.
+  4. ChromaDB persistence in `knowledge/chroma_db/` with cosine distance HNSW index and collection metadata tracking corpus version (`v1.0-1b95cf635c01`).
+  5. Metadata filtering (`crop`, `topic`, `region`, `soil`, `growth_stage`).
+  6. Confidence gating with explicit short-circuit to `EVIDENCE_INSUFFICIENT` on low similarity (< 0.50) or no matches.
+  7. Deterministic citation and chemical safety validator (`CitationValidator`) enforcing zero-hallucination citations and blocking automated pesticide/chemical dosage prescriptions (`agronomic-safety.md`).
+- Author gold-standard benchmark set (`knowledge/gold_retrieval_set.json`), evaluation harness (`eval.py`), and evaluation report (`docs/evaluation/RAG_RETRIEVAL_EVALUATION.md`).
+- Define narrow, read-only integration contract for Stage 16 (`docs/architecture/STAGE_16_INTEGRATION_CONTRACT.md`).
+- Ensure unit and contract tests pass with 100% success.
+
+### 2. Implemented & Workspace Changes
+- **Source Register (`knowledge/source-register.csv`):**
+  - Registered 5 approved sources: `FAO-56-CH06` (FAO-56 Single Crop Coefficient $K_c$), `UASB-POP-RAGI-2022` (UAS Bangalore Package of Practices for Finger Millet), `ICAR-AICRP-FM-2021` (ICAR AICRP Small Millets Research Advisory), `TNAU-AGRITECH-RAGI-2020` (TNAU Agritech Portal Water Management), `ICAR-CRIDA-DRYLAND-2019` (ICAR-CRIDA Kolar Contingency Plan).
+- **Corpus Documentation (`knowledge/corpus/`):**
+  - Authored 5 detailed, audited markdown documents capturing verified agronomic equations ($TAW, RAW, K_c, K_y$), soil hydraulics (Alfisols 100–120 mm/m available water capacity), critical growth stages (flowering/grain filling), dryland moisture conservation (*edekunte* inter-cultivation), and strict chemical safety prohibitions.
+- **RAG Subsystem Package (`packages/agronomy-rag/`):**
+  - `models.py`: Pydantic/dataclass models for `SourceMetadata`, `EvidenceChunk`, `AgronomyMetadataFilter`, `EvidenceBundle`, and `CitationValidationResult`.
+  - `ingest.py`: Heading-aware semantic splitter with YAML frontmatter parsing, context injection headers, deterministic citation ID generation, and corpus SHA-256 versioning.
+  - `store.py`: `AgronomyVectorStore` managing Chroma client, collection creation with `"hnsw:space": "cosine"`, embedding batch generation via ONNX runtime, and corpus indexing.
+  - `retriever.py`: `retrieve_agronomy_guidance()` entrypoint with metadata filtering, relevance gating, and fallback handling.
+  - `validator.py`: `CitationValidator` verifying citation provenance against retrieved bundles and regex-auditing against unauthorized chemical dosage prescriptions.
+  - `eval.py`: Quantitative retrieval evaluation harness calculating Precision@k, Recall@k, MRR, and latency.
+  - `cli.py`: Unified CLI entrypoint with `index`, `query`, and `info` commands.
+- **Corpus Vector Indexing:**
+  - Indexed 21 chunks into `knowledge/chroma_db/` under collection `agri_agronomy_knowledge`.
+- **Evaluation & Benchmarking:**
+  - Evaluated against 10 gold benchmark queries in `knowledge/gold_retrieval_set.json`.
+  - Results: Mean Precision@3 = 0.5333, Mean Recall@3 = 0.8000, Mean Reciprocal Rank (MRR) = 0.7333, Mean Latency = 288.58 ms.
+- **Verification & Testing:**
+  - `tests/unit/test_agronomy_rag.py`: 12 comprehensive unit tests covering source registration, chunk generation, citation ID determinism, ONNX vector storage, relevance score thresholding, metadata filtering, explicit `EVIDENCE_INSUFFICIENT` no-result path, citation validation, and chemical dosage safety regex blocking.
+  - Test result: **12 passed in 4.41s**. Full repository suite: **137 passed**.
+
+### 3. Files Created & Modified
+- `knowledge/source-register.csv` (Created)
+- `knowledge/corpus/FAO-56-CH06.md` (Created)
+- `knowledge/corpus/UASB-POP-RAGI-2022.md` (Created)
+- `knowledge/corpus/ICAR-AICRP-FM-2021.md` (Created)
+- `knowledge/corpus/TNAU-AGRITECH-RAGI-2020.md` (Created)
+- `knowledge/corpus/ICAR-CRIDA-DRYLAND-2019.md` (Created)
+- `knowledge/gold_retrieval_set.json` (Created)
+- `packages/agronomy-rag/pyproject.toml` (Created)
+- `packages/agronomy-rag/src/agri_agronomy_rag/__init__.py` (Created)
+- `packages/agronomy-rag/src/agri_agronomy_rag/models.py` (Created)
+- `packages/agronomy-rag/src/agri_agronomy_rag/ingest.py` (Created)
+- `packages/agronomy-rag/src/agri_agronomy_rag/store.py` (Created)
+- `packages/agronomy-rag/src/agri_agronomy_rag/retriever.py` (Created)
+- `packages/agronomy-rag/src/agri_agronomy_rag/validator.py` (Created)
+- `packages/agronomy-rag/src/agri_agronomy_rag/eval.py` (Created)
+- `packages/agronomy-rag/src/agri_agronomy_rag/cli.py` (Created)
+- `packages/agronomy-rag/README.md` (Created)
+- `tests/unit/test_agronomy_rag.py` (Created, 12 tests)
+- `docs/architecture/AGRONOMY_RAG_DESIGN.md` (Created)
+- `docs/evaluation/RAG_RETRIEVAL_EVALUATION.md` (Created)
+- `docs/architecture/STAGE_16_INTEGRATION_CONTRACT.md` (Created)
+- `docs/development/STATUS_SNAPSHOT.md` (Updated)
+- `docs/development/BUILD_LOG.md` (Updated)
+- `pyproject.toml` (Updated)
+
+### 4. Stage Gate Outcome: PASS
+- **Gate Criteria:** Authoritative agronomy corpus audited and registered; semantic chunking preserves section and document context; deterministic citation IDs mapped; offline ONNX vector embeddings and Chroma persistence verified; explicit no-result safety path and chemical dosage blocking active; retrieval evaluation achieved 0.8000 Recall@3 and 0.7333 MRR; Stage 16 contract frozen; 100% of tests passing.
+- **Next Stage:** Phase IV / Stage 16 — Bounded Investigator Agent & Guardrails.
+
+---
+
+## Entry 017: Stage 16 — Multi-Agent Investigation Architecture & Structured Specialist Handoffs
+
+- **Date:** 2026-11-04
+- **Phase:** Phase IV — Agentic AI Alert Investigator & Knowledge Retrieval
+- **Domain:** Multi-Agent Supervision, Specialist Diagnostic Agents, State Machine Transitions & Deterministic Safety Boundaries
+- **Status:** PASS
+
+### 1. Requirements Addressed
+- Evolved single-agent investigator into a multi-agent system comprising **one Supervisor/Coordinator and six separately invocable specialist agents** based on professor feedback:
+  1. `sensor_reliability_agent`: Assesses sensor health, differentiates natural flatlines from faults, issues go/no-go recommendation for agronomic analysis.
+  2. `field_context_agent`: Retrieves verified parcel metadata, variety parameters (Ragi GPU-28), and regional weather context; explicitly reports missing fields.
+  3. `crop_risk_analyst_agent`: Interprets candidate alerts with reliability and field context; formulates structured risk hypothesis and explicit evidence request without recalculating deterministic CSI.
+  4. `agronomy_knowledge_agent`: Queries Stage 15 RAG service; selects accredited chunks; validates citation IDs.
+  5. `agricultural_advisory_agent`: Formulates cautious, field-contextual advisory proposals citing verified evidence chunks; abstains on untrusted telemetry or evidence gaps.
+  6. `critic_safety_agent`: Independently audits cross-agent consistency, citation grounding, absence of chemical dosages, and uncertainty acknowledgment.
+- Supervisor component orchestrates parallel fan-out (`sensor_reliability` and `field_context`), serial risk and knowledge stages, advisory drafting, Critic revision loop (`max_revisions = 2`), and terminal state machine transitions.
+- Versioned, immutable `AgentMessage` envelope with deterministic `idempotency_key` preventing duplicate side effects.
+- 15-state explicit workflow state machine rejecting illegal transitions (`InvalidStateTransitionError`).
+- Deterministic non-LLM safety gates running externally outside all LLM agents (`DeterministicSafetyGate`).
+- TimescaleDB persistence migration (`003_multi_agent_investigation.up.sql`) for runs, messages, and transitions.
+- Low-cardinality Prometheus metrics (`MULTI_AGENT_INVOCATIONS_TOTAL`, `MULTI_AGENT_HANDOFFS_TOTAL`, `MULTI_AGENT_REVISIONS_TOTAL`, `MULTI_AGENT_ABSTENTIONS_TOTAL`, duration histograms).
+
+### 2. Implemented & Workspace Changes
+- **Alert Investigator Service Package (`services/alert-investigator/`):**
+  - Created `pyproject.toml` and registered in root workspace members and test pythonpath.
+  - `models.py`: Pydantic v2 schemas for `WorkflowState` (15 states), `AgentRole`, `MessageType`, `CriticVerdict`, `AgentMessage`, all specialist input/output models, and canonical `InvestigationState`.
+  - `state.py`: Explicit transition graph (`VALID_TRANSITIONS`), `validate_transition()`, `transition_state()`, and `InvalidStateTransitionError`.
+  - `protocol.py`: `create_agent_message()`, deterministic `generate_idempotency_key()` with cycle awareness, `MessageRouter` with duplicate detection and direct agent-to-agent prohibition.
+  - `safety.py`: `DeterministicSafetyGate` auditing sensor reliability, citation ID existence in retrieved bundle, regex chemical dosage detection, and autonomous physical actuation prevention.
+  - `supervisor.py`: `MultiAgentSupervisor` managing parallel fan-out, pipeline progression, Critic revision loops, deterministic safety verification, and human decision processing.
+  - `cli.py`: Unified CLI entrypoint with `investigate` command.
+  - Specialist Agents in `agents/`:
+    - `base.py`: `BaseSpecialistAgent` abstract class with mock mode and duration tracking.
+    - `sensor_reliability.py`: `SensorReliabilityAgent`.
+    - `field_context.py`: `FieldContextAgent`.
+    - `crop_risk_analyst.py`: `CropRiskAnalystAgent`.
+    - `agronomy_knowledge.py`: `AgronomyKnowledgeAgent` querying Stage 15 RAG service.
+    - `agricultural_advisory.py`: `AgriculturalAdvisoryAgent`.
+    - `critic_safety.py`: `CriticSafetyAgent`.
+- **Database Persistence (`infra/database/migrations/` & `packages/database-client/`):**
+  - Created `003_multi_agent_investigation.up.sql` and `003_multi_agent_investigation.down.sql` declaring `multi_agent_investigation_runs`, `agent_messages`, and `investigation_state_transitions`.
+  - Extended `PersistenceRepository` with `create_multi_agent_run()`, `update_multi_agent_run()`, `record_agent_message()`, `record_state_transition()`, `get_multi_agent_run()`, `get_run_messages()`, `get_run_state_transitions()`.
+- **Prometheus Metrics (`packages/shared-python/src/agri_shared/metrics.py`):**
+  - Added 6 low-cardinality multi-agent instruments covering agent invocations, message handoffs, Critic revisions, abstentions, agent duration, and total run duration.
+- **Documentation:**
+  - `docs/decisions/ADR-0008-multi-agent-investigation-architecture.md`
+  - `docs/architecture/MULTI_AGENT_ARCHITECTURE.md`
+  - `docs/architecture/AGENT_COMMUNICATION_PROTOCOL.md`
+  - `docs/architecture/INVESTIGATION_STATE_MACHINE.md`
+  - `docs/demo/MULTI_AGENT_CODE_TRACE.md` (exact lines and symbols)
+- **Verification & Testing:**
+  - `tests/unit/test_multi_agent_investigation.py`: 13 comprehensive unit tests covering all required execution scenarios.
+  - Result: **13 passed in 6.14s**. Full monorepo test suite: **150 passed, 1 skipped**.
+
+### 3. Stage Gate Outcome: PASS
+- **Gate Criteria:** One Supervisor and 6 distinct specialist agents implemented with isolated input/output schemas; pure-Python state machine verified across 15 states; versioned AgentMessage protocol with duplicate detection; Critic revision routing with bounded loop termination; deterministic citation and chemical dosage safety gates active; database persistence schema migrated; all 13 multi-agent tests and 150 repository tests passing.
+- **Next Stage:** Phase V / Stage 17 — Backend API Implementation (FastAPI).
+
+
+---
+
+## Stage 17 — Backend API Implementation (FastAPI)
+- **Date & Time:** 2026-11-04T19:55:00+05:30
+- **Lead Engineer:** Antigravity AI Assistant
+- **Status:** Complete (Gate: PASS)
+- **Rules Followed:**
+  - `architecture-guardrails.md`: Supervisor exclusivity enforced; no client bypass of Supervisor or specialist agent contracts; strict field ownership boundaries.
+  - `agronomic-safety.md`: Zero physical hardware actuation commands; deterministic safety gate verified; human approval lifecycle strictly maintained.
+  - `security-and-secrets.md`: Local-only bindings; zero leakage of private prompts, hidden chain-of-thought, or internal secrets; administrative endpoints protected with API key authentication.
+  - `testing-and-evaluation.md`: 100% test pass rate across unit and auth boundary suites; offline mock repository fallback ensuring test isolation.
+
+### 1. Stage Objectives
+- Inspect existing backend skeletons and preserve working functionality.
+- Implement versioned, validated FastAPI backend (`/api/v1`) with CORS, OpenAPI schemas, and error envelopes.
+- Implement endpoints for:
+  - Farm/field profile management and real-time operational status.
+  - Time-series physical observations and 24h temporal trends.
+  - Sensor-health status history and telemetry data freshness.
+  - Candidate risk alerts and corroborating sensor evidence.
+  - Supervisor-mediated multi-agent investigation execution and status.
+  - State machine chronological timeline and auditable agent handoff summaries.
+  - Accredited evidence/citation references.
+  - Advisory proposals and human approval actions (`APPROVE`, `REJECT`).
+  - Farmer execution feedback and system audit logging.
+  - Service health/readiness probes and privileged operations telemetry.
+- Enforce multi-agent API invariants:
+  - Invocation through `MultiAgentSupervisor` only; no direct specialist agent calls.
+  - State machine progression cannot be manually overridden or bypassed.
+  - No prompt or private chain-of-thought leakage in client responses.
+  - Human decision actions must not dispatch automated physical actuation.
+  - Field parcel isolation enforced via caller role and farmer ID headers.
+- Author `docs/architecture/API_CONTRACTS.md` and update `services/api/README.md`.
+- Validate with comprehensive unit and auth boundary test suites.
+
+### 2. Implemented & Workspace Changes
+- **API Service Package (`services/api/src/agri_api/`):**
+  - `config.py`: Centralized `ApiConfig` with CORS origins, host, port, timeout, and admin secret key.
+  - `auth.py`: Role-Based Access Control (`UserRole`: `farmer`, `agronomist`, `admin`), `AuthenticatedUser`, `get_current_user`, `verify_field_access`, `require_agronomist_or_admin`, `require_admin`.
+  - `dependencies.py`: Dependency injection providers for `get_repository()`, `get_supervisor()`, and fallback `LocalMemoryRepository`.
+  - `models/`:
+    - `common.py`: Standard `PaginatedResponse`, `ErrorResponse`, `ActionStatusResponse`.
+    - `fields.py`: `FieldProfileCreate`, `FieldProfileUpdate`, `FieldProfileResponse`, `FieldStatusResponse`.
+    - `telemetry.py`: `ObservationResponse`, `SensorFreshnessResponse`, `SensorHealthEventResponse`, `FieldTrendsResponse`.
+    - `alerts.py`: `CandidateAlertResponse`, `AlertEvidenceResponse`.
+    - `investigations.py`: `InvestigationCreateRequest`, `InvestigationSummaryResponse`, `StateTimelineEvent`, `AgentHandoffSummary`, `CitationReferenceResponse`.
+    - `advisories.py`: `AdvisoryResponse`, `HumanDecisionRequest`, `HumanDecisionResponse`, `HumanFeedbackRequest`, `HumanFeedbackResponse`.
+    - `operations.py`: `ComponentHealth`, `ServiceHealthResponse`, `OperationsStatusResponse`.
+  - `routers/`:
+    - `operations.py`: Root `/healthz`, `/readyz`, `/metrics`, and `/api/v1/operations/status`.
+    - `fields.py`: `/api/v1/fields` (CRUD, status, metadata update via PATCH/PUT).
+    - `telemetry.py`: `/api/v1/fields/{id}/observations`, `/trends`, `/sensor-health`, and `/api/v1/sensors/freshness`.
+    - `alerts.py`: `/api/v1/alerts`, `/api/v1/alerts/{id}`, `/api/v1/alerts/{id}/evidence`.
+    - `investigations.py`: `/api/v1/investigations` (POST supervisor trigger, GET summary, timeline, messages, citations, human-decision).
+    - `advisories.py`: `/api/v1/advisories`, `/api/v1/advisories/{id}/action`, `/api/v1/feedback`.
+    - `debug.py`: `/api/v1/admin/debug/state` (admin-scoped debug inspection).
+  - `main.py`: `create_app()` factory with CORS middleware, exception handlers, and router mounting.
+- **Persistence Enhancements (`packages/database-client/src/agri_persistence/repository.py`):**
+  - Added repository query methods for field profiles, observations, sensor health events, candidate alerts, farmer recommendations, and human feedback.
+- **Documentation:**
+  - `docs/architecture/API_CONTRACTS.md`: Exhaustive OpenAPI contracts, RBAC access matrix, request/response payloads, and invariant guarantees.
+  - `services/api/README.md`: Architecture, responsibilities, endpoints directory, and local execution instructions.
+- **Verification & Testing:**
+  - `tests/unit/test_api_endpoints.py`: 16 tests covering all API endpoints and response contracts.
+  - `tests/unit/test_api_auth_boundaries.py`: 11 tests proving field parcel isolation, role hierarchy, admin key gating, invalid state rejection, and zero physical actuation.
+  - Result: **27 passed in 3.73s**. Full monorepo test suite: **162 passed, 1 skipped**.
+
+### 3. Stage Gate Outcome: PASS
+- **Gate Criteria:** 33 versioned REST endpoints implemented; strict supervisor exclusivity verified; field parcel ownership boundary enforced; zero autonomous hardware actuation invariant maintained; comprehensive API contracts documentation authored; 27 API tests passing and 162 total monorepo tests passing.
+- **Next Stage:** Phase V / Stage 18 — Farmer Progressive Web App (PWA) Implementation.
+
+
+---
+
+## Stage 18 — Farmer Progressive Web App (PWA) Implementation
+- **Date & Time:** 2026-11-04T20:30:00+05:30
+- **Lead Engineer:** Antigravity AI Assistant
+- **Status:** Complete (Gate: PASS)
+- **Rules Followed:**
+  - `architecture-guardrails.md`: Exclusive integration through backend REST API; zero direct connections to databases, Kafka, Chroma, or LLM providers; client secrets strictly absent.
+  - `agronomic-safety.md`: Zero automated hardware actuation; all agricultural recommendations require human approval; transparent citation attribution; explicit uncertainty disclaimer.
+  - `data-provenance.md`: Visual tagging distinguishing physical ground probes, regional weather stations, and model estimates.
+  - `testing-and-evaluation.md`: 100% test pass rate across component, route, accessibility, and API client suites.
+
+### 1. Stage Objectives
+- Inspect existing frontend skeleton and approved UI decisions (`ADR-0007`).
+- Build responsive, mobile-first Progressive Web App (PWA) using React 18 + Vite + TypeScript.
+- Implement 10 core farmer screens:
+  1. Sign-in / onboarding appropriate to prototype with persona toggle.
+  2. Farm and registered field parcel list.
+  3. Field profile setup & editing (crop, variety, sowing date, growth stage, soil type, irrigation method).
+  4. Field real-time overview (latest conditions, source type, timestamp, data freshness, quality indicator).
+  5. Environmental trend view with explicit units and time ranges (24h/7d).
+  6. Sensor-health notice with plain-language explanations.
+  7. Alert inbox and alert detail breakdown (what, when, severity, evidence, why it matters).
+  8. Recommendation/advisory card (proposed action, scientific citations, assumptions, limitations, uncertainty).
+  9. Human review controls (`Approve`, `Reject`, `Request Inspection`) with idempotent action tokens.
+  10. Alert, investigation, and decision history.
+- Implement multi-agent transparency for farmers:
+  - Concise 5-milestone progress section reflecting persisted Supervisor states.
+  - Verified summaries from `sensor_reliability_agent`, `field_context_agent`, `crop_risk_analyst`, `agronomy_knowledge_agent`, and `critic_safety_agent`.
+  - Zero leakage of raw prompts, internal chain-of-thought, or private model deliberations.
+  - Grounding disclaimer making clear agents assist investigations and do not replace qualified expert judgment.
+- Deliver full bilingual localisation for English and Kannada (ಕನ್ನಡ).
+- Author `docs/architecture/FARMER_PWA_SPEC.md` and update `apps/farmer-pwa/README.md`.
+- Validate with automated Vitest + Testing Library test suite.
+
+### 2. Implemented & Workspace Changes
+- **PWA Application Package (`apps/farmer-pwa/`):**
+  - `package.json`: Configured React 18, Vite 6, TypeScript 5.7, Vitest 2.1, and Testing Library.
+  - `vite.config.ts`: Configured Vite proxy to backend API (`http://127.0.0.1:8000`), Vitest jsdom environment.
+  - `public/`:
+    - `manifest.json`: Web App Manifest with theme color `#166534`, standalone display mode.
+    - `favicon.svg`: High-resolution agricultural brand icon.
+    - `sw.js`: Service worker precaching app shell for field offline resilience.
+  - `src/types/api.ts`: Strict TypeScript interfaces matching backend API contracts.
+  - `src/services/api.ts`: Typed REST client with `X-User-Role` / `X-Farmer-ID` headers and offline fallback fixtures.
+  - `src/i18n/translations.ts`: Comprehensive bilingual dictionary for English and Kannada (ಕನ್ನಡ).
+  - `src/components/common/`:
+    - `Header.tsx`: Brand header with language switcher, active field parcel, and online/offline status.
+    - `Navbar.tsx`: Mobile bottom navigation bar with notification badges and minimum 48px touch targets.
+    - `Badge.tsx`: Color-coded accessible status, severity, and provenance tags.
+    - `Icons.tsx`: Accessible inline SVGs.
+    - `MultiAgentProgress.tsx`: 5-milestone investigation tracker with scientific citations and disclaimer.
+  - `src/components/screens/`:
+    - `OnboardingScreen.tsx`: Farmer welcome and persona selection.
+    - `OverviewScreen.tsx`: Real-time conditions, moisture deficit warning, and sensor reliability.
+    - `TrendsScreen.tsx`: 24-hour and 7-day depletion curves against FAO-56 critical threshold.
+    - `AlertsScreen.tsx`: Alert detail, physical evidence, and why it matters.
+    - `AdvisoriesScreen.tsx`: Actionable recommendations, human decision buttons, and outcome feedback dialog.
+    - `FieldsScreen.tsx`: Parcel list and profile setup modal.
+    - `HistoryScreen.tsx`: Chronological audit trail.
+  - `src/App.tsx`: Root state management, network monitoring, and routing.
+  - `src/index.css`: Mobile-first responsive stylesheet with WCAG-compliant color contrasts.
+- **Documentation:**
+  - `docs/architecture/FARMER_PWA_SPEC.md`: UI route inventory, farmer workflows, provenance rules, and accessibility standards.
+  - `apps/farmer-pwa/README.md`: Capabilities, directory structure, and development commands.
+- **Verification & Testing:**
+  - `src/test/components.test.tsx`: 5 tests covering screen rendering, language toggling, and review controls.
+  - `src/test/accessibility.test.tsx`: 3 tests verifying WCAG landmarks, touch targets, and ARIA attributes.
+  - `src/test/api_service.test.ts`: 5 tests validating API client headers, fallback fixtures, and human review actions.
+  - Result: **13 passed in 5.33s** (Vitest).
+  - Production build: `dist/` verified at **214 kB (63.95 kB gzipped)**, preview server tested at `200 OK`.
+
+### 3. Stage Gate Outcome: PASS
+- **Gate Criteria:** All 10 core screens implemented; bilingual English/Kannada active; 5-milestone multi-agent progress section rendered truthfully without prompt/COT leakage; zero autonomous actuation invariant verified; WCAG 2.1 AA accessible touch targets and contrast compliant; 13 frontend tests passing; production build verified under 65 kB gzipped.
+- **Next Stage:** Phase V / Stage 19 — Notification & Feedback Workflow (Telegram Worker & Review Loop).
+
+---
+
+## Stage 19 — Notification and Human Feedback Workflow
+- **Date & Time:** 2026-11-04T21:00:00+05:30
+- **Lead Engineer:** Antigravity AI Assistant
+- **Status:** Complete (Gate: PASS)
+- **Rules Followed:**
+  - `architecture-guardrails.md`: Zero direct hardware actuation commands; notifications and human review actions are purely informational and advisory; all state transitions logged with compound idempotency keys.
+  - `agronomic-safety.md`: Never broadcast unsupported chemical pesticide dosages or absolute outcome guarantees; sensor-faulty or degraded alerts automatically suppress broadcast; zero online mutation of agent system prompts or agronomic thresholds.
+  - `data-provenance.md`: All outbound notifications include explicit data provenance caveats (ground sensor vs satellite reanalysis) and deep link directly to the field parcel in the AgriKafka PWA.
+  - `testing-and-evaluation.md`: 100% test pass rate covering duplicate suppression, retries, dead-letter routing, safety gates, lifecycle state transitions, and audit trails.
+
+### 1. Stage Objectives
+- Implement the notification and human feedback workflow using the existing Supervisor, investigation state, backend API, and farmer PWA.
+- Establish the complete human review lifecycle:
+  - States: `PROPOSED`/`AWAITING_REVIEW`, `APPROVED`, `REJECTED`, `ACKNOWLEDGED`, `REQUEST_INSPECTION`, `EXPIRED`, `SUPERSEDED`.
+  - Record reviewer ID, timestamp, advisory/run version, decision, reason, and idempotency key.
+  - Safe handling of duplicate, stale, and out-of-order review actions with HTTP 409 Conflict rejection.
+  - Enforce zero physical actuation invariant across all decisions.
+- Build the structured feedback loop back into the multi-agent system:
+  - Capture: `advisory_relevant`, `evidence_useful`, `field_context_correct`, `sensor_issue_reported`, `sensor_issue_notes`, `expert_followup_requested`, comments, rating (1–5).
+  - Associate feedback with investigation run, candidate alert, advisory version, and cited agent output references.
+  - Queryable for Stage 20 evaluation.
+  - Hard invariant: zero automatic online mutation of agent prompts or crop thresholds.
+- Implement multi-channel notification engine:
+  - Compound idempotency key: `(alert_id, advisory_version, recipient_id, channel)`.
+  - Delivery tracking: `PENDING`, `SENT`, `FAILED`, `DEAD_LETTER`.
+  - Bounded exponential retries/backoff with DLQ routing upon exhaustion.
+  - Policy gates: qualify alerts (`SOIL_MOISTURE_DEPLETION`, `BLAST_DISEASE_RISK`, `THERMAL_STRESS_SPIKE`), check urgency (`CRITICAL`/`HIGH`), suppress delivery if sensor health is degraded or Critic abstains.
+  - Safety filter: reject/sanitize specific synthetic chemical dosages and absolute cure guarantees.
+  - Channel providers: `InMemoryNotificationProvider` and `LocalMockNotificationProvider` for offline development/testing, `PwaPushProvider` for in-app pushes, and `TelegramNotificationProvider` with token redaction and safety suppression.
+
+### 2. Implemented & Workspace Changes
+- **Database Migrations (`infra/database/migrations/`):**
+  - `004_notifications_and_feedback.up.sql`: Updated `farmer_recommendations` approval check constraint, added `advisory_version`, enhanced `human_feedback` with multi-agent linkage and granular attributes, created `notification_dispatches` table with compound idempotency indices.
+  - `004_notifications_and_feedback.down.sql`: Reversion script.
+- **Notification Worker Service (`services/notification-worker/`):**
+  - `pyproject.toml`: Package definition registered in root monorepo.
+  - `src/agri_notifications/`:
+    - `models.py`: `NotificationChannel`, `DeliveryStatus`, `ReviewAction`, `AdvisoryStatus`, `NotificationPayload`, `NotificationDispatch`, `StructuredFeedbackInput`, `HumanReviewActionRequest`, `HumanReviewActionResponse`.
+    - `config.py`: `NotificationSettings` with environment fallbacks.
+    - `policy.py`: `NotificationPolicyEvaluator` enforcing alert qualification, urgency thresholds, sensor-health suppression, and chemical dosage/guarantee restrictions.
+    - `providers/`:
+      - `base.py`: `BaseNotificationProvider` ABC.
+      - `mock.py`: `LocalMockNotificationProvider` and `InMemoryNotificationProvider` with configurable failure simulation.
+      - `pwa.py`: `PwaPushProvider` formatting deep-linked payloads.
+      - `telegram.py`: `TelegramNotificationProvider` with bilingual Kannada hint and token redaction.
+    - `dispatcher.py`: `NotificationDispatcher` with compound deduplication, bounded retries, exponential backoff, and DLQ persistence.
+    - `lifecycle.py`: `HumanReviewLifecycleManager` handling 7-state transitions, stale conflict detection, and zero physical actuation assertion.
+    - `feedback.py`: `FeedbackProcessor` validating multi-agent linkage and enforcing offline-only learning invariant.
+    - `cli.py`: Unified operations CLI for dispatch, review, and feedback testing.
+- **Repository and Backend API Extensions:**
+  - Extended `PersistenceRepository` (`packages/database-client/src/agri_persistence/repository.py`) and `LocalMemoryRepository` (`services/api/src/agri_api/dependencies.py`) with `create_notification_dispatch`, `get_notification_dispatch_by_idempotency`, `list_notification_dispatches`, `get_feedback_by_idempotency`, and enhanced `record_human_feedback`.
+  - Updated `services/api/src/agri_api/models/advisories.py` and `services/api/src/agri_api/routers/advisories.py` to route advisory actions through `HumanReviewLifecycleManager`, feedback through `FeedbackProcessor`, and exposed `/notifications/dispatches` endpoint for auditability.
+- **Operations Runbook Update (`docs/operations/OPERATIONS_RUNBOOK.md`):**
+  - Added runbooks for notification worker monitoring, dead-letter queue triage, and feedback evaluation queries.
+- **Verification & Testing:**
+  - Authored `tests/unit/test_notifications_and_feedback.py` covering all 11 critical scenarios:
+    1. Compound idempotency duplicate suppression.
+    2. Bounded exponential retries and transient failure recovery.
+    3. Dead-letter queue routing upon maximum retry exhaustion.
+    4. Sensor-faulty alert suppression.
+    5. Critic/Supervisor abstention suppression.
+    6. Content safety gate rejection of chemical dosages (`carbendazim`, `ml/L`).
+    7. Content safety gate rejection of absolute outcome guarantees.
+    8. Telegram provider token redaction and test environment suppression.
+    9. Human review lifecycle transitions, stale action conflicts (409), and zero physical actuation.
+    10. Multi-agent feedback linkage, idempotency, and zero online mutation invariant.
+    11. FastAPI API endpoints integration via test client.
+  - Result: **11 passed in 3.03s**.
+  - Full workspace test suite: **173 passed, 1 skipped (100% pass rate)**.
+
+### 3. Stage Gate Outcome: PASS
+- **Gate Criteria:** Notification dispatcher with compound idempotency and DLQ verified; 7-state review lifecycle with zero actuation verified; multi-agent evidence-linked feedback loop verified with offline learning invariant; content safety gates blocking chemical dosages and guarantees active; 11 unit tests passing; 173 total tests passing across workspace.
+- **Next Stage:** Phase VI / Stage 20 — Reproducible Experimental Harness & Offline Evaluation.

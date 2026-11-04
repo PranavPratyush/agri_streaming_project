@@ -1,174 +1,221 @@
-# Kafka and SQL Command Cheatsheet
-**System:** AgriKafka-Agent  
-**Database:** TimescaleDB / PostgreSQL 16 (`127.0.0.1:5432`)  
-**Message Broker:** Apache Kafka 3.8.0 KRaft (`127.0.0.1:9092`)  
+# AgriKafka-Agent: Kafka CLI & TimescaleDB SQL Cheatsheet (Stages 0–19)
+
+**Purpose:** Rapid Reference Cheatsheet for Technical Live Demonstration & Faculty Inquiries  
+**Broker Host Listener:** `127.0.0.1:9092`  
+**TimescaleDB Connection:** `127.0.0.1:5432` | Database: `agrikafka` | User: `agri_admin` (or `agri_readonly`)  
 
 ---
 
-## 1. TimescaleDB Verification Queries (Run inside `psql` or DBeaver)
+## 1. Apache Kafka KRaft CLI Commands
 
-To enter the database CLI directly from host PowerShell:
-```powershell
+Run these inside the Kafka broker container or from a terminal with Kafka binaries installed:
+
+### 1.1 List All Canonical Topics
+```bash
+docker exec -it agrikafka-broker-dev /opt/kafka/bin/kafka-topics.sh \
+  --bootstrap-server localhost:9092 --list
+```
+*Expected Topics:*
+```
+agri.candidate-alerts
+agri.dead-letter-queue
+agri.human-feedback
+agri.investigation-results
+agri.operational-metrics
+agri.sensor-health-events
+agri.sensor-readings
+agri.validated-observations
+agri.weather-data
+```
+
+### 1.2 Describe Topic Partitions & Replication Factor
+```bash
+docker exec -it agrikafka-broker-dev /opt/kafka/bin/kafka-topics.sh \
+  --bootstrap-server localhost:9092 --describe --topic agri.candidate-alerts
+```
+*Expected Output:* `PartitionCount: 3`, `ReplicationFactor: 1`, `Configs: retention.ms=2592000000,cleanup.policy=delete`.
+
+### 1.3 Consume Raw Sensor Telemetry (`agri.sensor-readings`)
+```bash
+docker exec -it agrikafka-broker-dev /opt/kafka/bin/kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic agri.sensor-readings \
+  --from-beginning --max-messages 5 --property print.key=true
+```
+
+### 1.4 Consume PySpark Validated Observations (`agri.validated-observations`)
+```bash
+docker exec -it agrikafka-broker-dev /opt/kafka/bin/kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic agri.validated-observations \
+  --from-beginning --max-messages 5 --property print.key=true
+```
+
+### 1.5 Consume Deterministic Sensor Health Forensics (`agri.sensor-health-events`)
+```bash
+docker exec -it agrikafka-broker-dev /opt/kafka/bin/kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic agri.sensor-health-events \
+  --from-beginning --max-messages 5 --property print.key=true
+```
+
+### 1.6 Consume Candidate Risk Alerts (`agri.candidate-alerts`)
+```bash
+docker exec -it agrikafka-broker-dev /opt/kafka/bin/kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic agri.candidate-alerts \
+  --from-beginning --max-messages 5 --property print.key=true
+```
+
+### 1.7 Inspect Consumer Group Offset Lag
+```bash
+docker exec -it agrikafka-broker-dev /opt/kafka/bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --describe --group agri-group-stream-processor
+```
+
+---
+
+## 2. TimescaleDB / PostgreSQL Analytical Queries
+
+Connect via `psql`:
+```bash
 docker exec -it agrikafka-timescaledb psql -U agri_admin -d agrikafka
 ```
+*(Or use read-only credentials: `-U agri_readonly -d agrikafka`)*
 
-### Query 1: Verify Hypertables Status
-```sql
-SELECT hypertable_name, num_dimensions, num_chunks, compression_enabled 
-FROM timescaledb_information.hypertables;
-```
-*Expected Output:*
-Shows `observations`, `windowed_features`, `sensor_health_events`, and `crop_candidate_alerts` as active hypertables.
-
-### Query 2: Inspect Recent Sensor Observations (Chronological)
+### 2.1 Sensor Freshness & Forensic Health Status
 ```sql
 SELECT 
-    event_time,
-    field_id,
-    sensor_id,
-    observed_variable,
-    numeric_value,
-    unit,
-    source_provider
-FROM observations 
-ORDER BY event_time DESC 
-LIMIT 10;
+    sm.sensor_id,
+    sm.field_id,
+    sm.sensor_model,
+    sm.measured_variable,
+    latest_obs.last_value,
+    latest_obs.last_event_time,
+    ROUND(EXTRACT(EPOCH FROM (NOW() - latest_obs.last_event_time))::numeric, 1) AS latency_seconds,
+    COALESCE(latest_health.health_state, 'UNKNOWN') AS health_state,
+    COALESCE(latest_health.reason_code, 'NO_DATA') AS reason_code
+FROM sensor_metadata sm
+LEFT JOIN LATERAL (
+    SELECT o.event_time AS last_event_time, o.numeric_value AS last_value
+    FROM observations o
+    WHERE o.sensor_id = sm.sensor_id
+    ORDER BY o.event_time DESC LIMIT 1
+) latest_obs ON TRUE
+LEFT JOIN LATERAL (
+    SELECT sh.health_state, sh.reason_code
+    FROM sensor_health_events sh
+    WHERE sh.sensor_id = sm.sensor_id
+    ORDER BY sh.event_time DESC LIMIT 1
+) latest_health ON TRUE
+WHERE sm.is_active = TRUE
+ORDER BY latency_seconds ASC NULLS LAST;
 ```
 
-### Query 3: Count Records by Variable and Provider
-```sql
-SELECT 
-    source_provider,
-    observed_variable,
-    count(*) as record_count,
-    min(numeric_value) as min_val,
-    avg(numeric_value)::numeric(10,2) as avg_val,
-    max(numeric_value) as max_val
-FROM observations 
-GROUP BY source_provider, observed_variable
-ORDER BY source_provider, observed_variable;
-```
-
-### Query 4: Inspect Sensor Health Events
-```sql
-SELECT 
-    event_time,
-    sensor_id,
-    field_id,
-    health_status,
-    anomaly_type,
-    confidence_score,
-    diagnostic_details
-FROM sensor_health_events
-ORDER BY event_time DESC 
-LIMIT 10;
-```
-
-### Query 5: Inspect Candidate Agronomic Alerts
+### 2.2 Recent Candidate Crop Risk Alerts
 ```sql
 SELECT 
     alert_id,
-    event_time,
     field_id,
-    crop_name,
-    growth_stage,
+    event_time,
+    alert_type,
     severity,
-    risk_type,
-    triggering_condition
+    status,
+    composite_stress_index,
+    fao56_depletion_fraction,
+    blast_risk_score,
+    thermal_stress_score,
+    sensor_health_state,
+    uncertainty_score
 FROM crop_candidate_alerts
-ORDER BY event_time DESC 
+ORDER BY event_time DESC
 LIMIT 10;
 ```
 
-### Query 6: Check Idempotency Key Distribution
+### 2.3 Multi-Agent Investigation Runs
 ```sql
 SELECT 
-    idempotency_key, 
-    count(*) as occurrences 
-FROM observations 
-GROUP BY idempotency_key 
-HAVING count(*) > 1;
-```
-*Expected Output:*
-`0 rows` (verifies zero duplicates exist).
-
----
-
-## 2. Kafka CLI Inspection Commands (Run from Host PowerShell)
-
-### Command 1: List All Topics
-```powershell
-docker exec agrikafka-broker-dev /opt/kafka/bin/kafka-topics.sh `
-  --bootstrap-server 127.0.0.1:9092 `
-  --list
+    run_id,
+    alert_id,
+    field_id,
+    current_state,
+    revision_count,
+    final_decision,
+    reliability_score,
+    confidence_score,
+    summary,
+    created_at,
+    updated_at
+FROM multi_agent_investigation_runs
+ORDER BY created_at DESC
+LIMIT 10;
 ```
 
-### Command 2: Describe a Topic (Partitions, Replicas, Min-ISR)
-```powershell
-docker exec agrikafka-broker-dev /opt/kafka/bin/kafka-topics.sh `
-  --bootstrap-server 127.0.0.1:9092 `
-  --describe `
-  --topic agri.sensor-readings
+### 2.4 Agent-to-Agent Message Audit Trail
+```sql
+SELECT 
+    message_id,
+    run_id,
+    from_agent,
+    to_agent,
+    message_type,
+    payload->>'verdict' AS verdict,
+    created_at
+FROM agent_messages
+ORDER BY created_at ASC
+LIMIT 20;
 ```
 
-### Command 3: Monitor Live Raw Telemetry Stream
-```powershell
-docker exec -it agrikafka-broker-dev /opt/kafka/bin/kafka-console-consumer.sh `
-  --bootstrap-server 127.0.0.1:9092 `
-  --topic agri.sensor-readings `
-  --from-beginning `
-  --property print.key=true `
-  --property print.timestamp=true
+### 2.5 Farmer Recommendations & Human Review Status
+```sql
+SELECT 
+    recommendation_id,
+    alert_id,
+    field_id,
+    action_category,
+    action_title,
+    urgency,
+    approval_status,
+    advisory_version,
+    approved_by,
+    approved_at,
+    created_at
+FROM farmer_recommendations
+ORDER BY created_at DESC
+LIMIT 10;
 ```
 
-### Command 4: Monitor Validated Observations Stream
-```powershell
-docker exec -it agrikafka-broker-dev /opt/kafka/bin/kafka-console-consumer.sh `
-  --bootstrap-server 127.0.0.1:9092 `
-  --topic agri.validated-observations `
-  --from-beginning
+### 2.6 Multi-Agent Linked Farmer Feedback
+```sql
+SELECT 
+    feedback_id,
+    recommendation_id,
+    investigation_id,
+    rating,
+    action_taken,
+    advisory_relevant,
+    evidence_useful,
+    sensor_issue_reported,
+    feedback_comments,
+    created_at
+FROM human_feedback
+ORDER BY created_at DESC
+LIMIT 10;
 ```
 
-### Command 5: Inspect Dead-Letter Queue (DLQ)
-```powershell
-docker exec -it agrikafka-broker-dev /opt/kafka/bin/kafka-console-consumer.sh `
-  --bootstrap-server 127.0.0.1:9092 `
-  --topic agri.dead-letter-queue `
-  --from-beginning
+### 2.7 Notification Dispatches & DLQ Tracking
+```sql
+SELECT 
+    dispatch_id,
+    alert_id,
+    channel,
+    status,
+    attempts,
+    delivered_at,
+    error_message,
+    created_at
+FROM notification_dispatches
+ORDER BY created_at DESC
+LIMIT 10;
 ```
-
-### Command 6: Inspect Consumer Groups and Partition Lag
-```powershell
-docker exec agrikafka-broker-dev /opt/kafka/bin/kafka-consumer-groups.sh `
-  --bootstrap-server 127.0.0.1:9092 `
-  --list
-
-# Describe specific consumer group:
-docker exec agrikafka-broker-dev /opt/kafka/bin/kafka-consumer-groups.sh `
-  --bootstrap-server 127.0.0.1:9092 `
-  --describe `
-  --group agrikafka-timescaledb-consumer
-```
-
----
-
-## 3. Fast Manual Ingestion & Test Trigger Commands
-
-### Run OpenSenseMap Live Station Ingestion:
-```powershell
-.\.venv\Scripts\Activate.ps1
-python apps/ingestion-service/src/agri_ingestion/adapters/live_station.py
-```
-
-### Run Historical Open-Meteo Replay (100x Speed):
-```powershell
-.\.venv\Scripts\Activate.ps1
-python apps/ingestion-service/src/agri_ingestion/adapters/replay.py --speed 100
-```
-
-### Inject a Malformed Record to Test DLQ:
-```powershell
-.\.venv\Scripts\Activate.ps1
-python scripts/demo/inject_fault.py --scenario corrupt_payload
-```
-

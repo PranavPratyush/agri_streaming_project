@@ -22,18 +22,26 @@ members = [
     "packages/event-contracts",
     "packages/database-client",
     "packages/shared-python",
+    "packages/agronomy-rag",
     "services/ingestion",
     "services/stream-processor",
     "services/risk-engine",
+    "services/alert-investigator",
+    "services/api",
+    "services/notification-worker",
 ]
 
 [tool.uv.sources]
 agri-event-contracts = { workspace = true }
 agri-persistence = { workspace = true }
 agri-shared = { workspace = true }
+agri-agronomy-rag = { workspace = true }
 agri-ingestion = { workspace = true }
 agri-stream-processor = { workspace = true }
 agri-risk-engine = { workspace = true }
+agri-investigator = { workspace = true }
+agri-api = { workspace = true }
+agri-notifications = { workspace = true }
 
 [tool.pytest.ini_options]
 minversion = "7.0"
@@ -46,9 +54,13 @@ pythonpath = [
     "packages/event-contracts/src",
     "packages/database-client/src",
     "packages/shared-python/src",
+    "packages/agronomy-rag/src",
     "services/ingestion/src",
     "services/stream-processor/src",
     "services/risk-engine/src",
+    "services/alert-investigator/src",
+    "services/api/src",
+    "services/notification-worker/src",
 ]
 python_files = [
     "test_*.py"

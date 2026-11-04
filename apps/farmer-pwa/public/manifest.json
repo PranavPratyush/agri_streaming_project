@@ -1,0 +1,23 @@
+{
+  "short_name": "AgriKafka",
+  "name": "AgriKafka-Agent Farmer Advisor",
+  "description": "Real-Time Agricultural Risk Monitoring and Decision Support for Smallholder Farmers",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#166534",
+  "display": "standalone",
+  "orientation": "portrait"
+}
+

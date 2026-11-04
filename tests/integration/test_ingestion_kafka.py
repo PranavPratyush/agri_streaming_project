@@ -23,10 +23,19 @@ from agri_ingestion.producer import AgriKafkaProducer
 
 
 def is_kafka_available(bootstrap_servers: str = "127.0.0.1:9092") -> bool:
+    import socket
+    try:
+        host, port_str = bootstrap_servers.split(":", 1)
+        port = int(port_str)
+        with socket.create_connection((host, port), timeout=0.5):
+            pass
+    except (OSError, ValueError):
+        return False
+
     try:
         from confluent_kafka.admin import AdminClient
-        admin = AdminClient({"bootstrap.servers": bootstrap_servers, "socket.timeout.ms": 3000})
-        metadata = admin.list_topics(timeout=3.0)
+        admin = AdminClient({"bootstrap.servers": bootstrap_servers, "socket.timeout.ms": 2000})
+        metadata = admin.list_topics(timeout=2.0)
         return metadata is not None
     except Exception:
         return False

@@ -1,0 +1,78 @@
+{
+  "corpus_version": "v1.0-1b95cf635c01",
+  "evaluation_date": "2026-11-04",
+  "domain": "Agronomy Knowledge Retrieval (Finger Millet GPU-28, Kolar)",
+  "queries": [
+    {
+      "query_id": "Q01",
+      "query": "What is the single crop coefficient Kc mid-season for small millets according to FAO 56?",
+      "target_source_ids": ["FAO-56-CH06"],
+      "expected_citation_prefix": "FAO-56-CH06:SEC01",
+      "topic": "water_management"
+    },
+    {
+      "query_id": "Q02",
+      "query": "What is the readily available water RAW and depletion fraction p for small millets?",
+      "target_source_ids": ["FAO-56-CH06"],
+      "expected_citation_prefix": "FAO-56-CH06:SEC02",
+      "topic": "water_management"
+    },
+    {
+      "query_id": "Q03",
+      "query": "What are the characteristics and duration of Ragi variety GPU-28 in Karnataka Zone 5?",
+      "target_source_ids": ["UASB-POP-RAGI-2022"],
+      "expected_citation_prefix": "UASB-POP-RAGI-2022:SEC01",
+      "topic": "crop_phenology"
+    },
+    {
+      "query_id": "Q04",
+      "query": "What is the field capacity and available water capacity of red sandy loam soils in Kolar?",
+      "target_source_ids": ["UASB-POP-RAGI-2022"],
+      "expected_citation_prefix": "UASB-POP-RAGI-2022:SEC02",
+      "topic": "soil_management"
+    },
+    {
+      "query_id": "Q05",
+      "query": "What is the most critical physiological growth stage for water stress in finger millet?",
+      "target_source_ids": ["UASB-POP-RAGI-2022", "TNAU-AGRITECH-RAGI-2020"],
+      "expected_citation_prefix": "UASB-POP-RAGI-2022:SEC03",
+      "topic": "water_management"
+    },
+    {
+      "query_id": "Q06",
+      "query": "How does inter-cultivation or edekunte conserve soil moisture in dryland ragi?",
+      "target_source_ids": ["UASB-POP-RAGI-2022", "ICAR-AICRP-FM-2021"],
+      "expected_citation_prefix": "UASB-POP-RAGI-2022:SEC04",
+      "topic": "cultural_practices"
+    },
+    {
+      "query_id": "Q07",
+      "query": "What visual stress indicators indicate severe moisture stress in finger millet?",
+      "target_source_ids": ["ICAR-AICRP-FM-2021"],
+      "expected_citation_prefix": "ICAR-AICRP-FM-2021:SEC02",
+      "topic": "drought_management"
+    },
+    {
+      "query_id": "Q08",
+      "query": "What contingency action should be taken for mid-season dry spells in Kolar finger millet?",
+      "target_source_ids": ["ICAR-CRIDA-DRYLAND-2019", "ICAR-AICRP-FM-2021"],
+      "expected_citation_prefix": "ICAR-CRIDA-DRYLAND-2019:SEC02",
+      "topic": "drought_management"
+    },
+    {
+      "query_id": "Q09",
+      "query": "What is the seasonal water requirement and irrigation schedule for finger millet?",
+      "target_source_ids": ["TNAU-AGRITECH-RAGI-2020"],
+      "expected_citation_prefix": "TNAU-AGRITECH-RAGI-2020:SEC01",
+      "topic": "water_management"
+    },
+    {
+      "query_id": "Q10",
+      "query": "Why are system operators forbidden from prescribing chemical pesticide concentrations?",
+      "target_source_ids": ["UASB-POP-RAGI-2022"],
+      "expected_citation_prefix": "UASB-POP-RAGI-2022:SEC04",
+      "topic": "cultural_practices"
+    }
+  ]
+}
+

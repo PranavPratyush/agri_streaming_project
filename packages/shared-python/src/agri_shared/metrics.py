@@ -226,6 +226,45 @@ INVESTIGATOR_FALLBACK_RATE_TOTAL = Counter(
     ["fallback_reason"],
 )
 
+# Multi-Agent Investigation Architecture Metrics
+MULTI_AGENT_INVOCATIONS_TOTAL = Counter(
+    "agri_multi_agent_invocations_total",
+    "Total invocations of specialist agents in the multi-agent investigation system",
+    ["agent_role", "status"],
+)
+
+MULTI_AGENT_HANDOFFS_TOTAL = Counter(
+    "agri_multi_agent_handoffs_total",
+    "Total handoffs routed between agents by supervisor",
+    ["from_agent", "to_agent", "message_type"],
+)
+
+MULTI_AGENT_REVISIONS_TOTAL = Counter(
+    "agri_multi_agent_revisions_total",
+    "Total revision cycles requested by critic safety agent",
+    ["target_agent", "reason_code"],
+)
+
+MULTI_AGENT_ABSTENTIONS_TOTAL = Counter(
+    "agri_multi_agent_abstentions_total",
+    "Total abstentions by multi-agent investigation system",
+    ["reason_code"],
+)
+
+MULTI_AGENT_AGENT_DURATION_SECONDS = Histogram(
+    "agri_multi_agent_agent_duration_seconds",
+    "Duration of individual specialist agent executions",
+    ["agent_role"],
+    buckets=(0.01, 0.05, 0.1, 0.5, 1.0, 2.5, 5.0, 10.0),
+)
+
+MULTI_AGENT_RUN_DURATION_SECONDS = Histogram(
+    "agri_multi_agent_run_duration_seconds",
+    "Total end-to-end multi-agent investigation duration in seconds",
+    ["final_status"],
+    buckets=(0.05, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0),
+)
+
 # =============================================================================
 # 7. Database & Persistence Layer Metrics
 # =============================================================================
